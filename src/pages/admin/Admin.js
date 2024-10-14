@@ -7,14 +7,13 @@ import Movies from './AdminMovies';
 import Languages from './AdminLanguages';
 import Categories from './AdminCategories';
 import Actors from './AdminActors';
-import Stores from './AdminStores';
 
 const Admin = () => {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const tabTitles = ['Users', 'Movies', 'Languages', 'Categories', 'Actors','Stores'];
+    const tabTitles = ['Users', 'Movies', 'Languages', 'Categories', 'Actors'];
 
     useEffect(() => {
         if (location.pathname === '/admin/users') {
@@ -27,8 +26,6 @@ const Admin = () => {
             setValue(3);
         } else if (location.pathname === '/admin/actors') {
             setValue(4);
-        } else if (location.pathname === '/admin/stores') {
-            setValue(5);
         }
     }, [location]);
 
@@ -44,8 +41,6 @@ const Admin = () => {
             navigate('/admin/categories');
         } else if (newValue === 4) {
             navigate('/admin/actors');
-        } else if (newValue === 5) {
-            navigate('/admin/stores');
         }
     };
 
@@ -85,7 +80,6 @@ const Admin = () => {
                         <Tab label="Languages" />
                         <Tab label="Categories" />
                         <Tab label="Actors" />
-                        <Tab label="Stores" />
                     </Tabs>
                 </Box>
                 <Routes>
@@ -95,7 +89,6 @@ const Admin = () => {
                     <Route path="languages" element={<Languages />} />
                     <Route path="categories" element={<Categories />} />
                     <Route path="actors" element={<Actors />} />
-                    <Route path="stores" element={<Stores />} />
                 </Routes>
             </div>
         </div>

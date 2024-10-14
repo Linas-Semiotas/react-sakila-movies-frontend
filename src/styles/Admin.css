@@ -91,7 +91,7 @@
 .filler {
     background-color: #f0f0f0;
     border: 1px solid #ddd;
-    padding: 2.5px!important;
+    padding: 3px!important;
     margin: 0;
     height: 100%;
     min-height: 100%; /* Ensures it stretches to fill the header height */
@@ -140,14 +140,43 @@
 }
 
 .delete-button {
+    margin: 2px;
     padding: 0.4rem 0.8rem;
-    background-color: #e74c3c; /* Red color */
+    background-color: #e74c3c;
     color: white;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
+    cursor: pointer!important;
     font-size: 0.9rem;
     transition: background-color 0.3s, transform 0.1s;
+}
+
+.delete-button:hover {
+    background-color: #c0392b;
+}
+
+.delete-button:active {
+    transform: scale(0.95);
+}
+
+.update-button {
+    margin: 2px;
+    padding: 0.4rem 0.8rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer!important;
+    font-size: 0.9rem;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.update-button:hover {
+    background-color: #2980b9;
+}
+
+.update-button:active {
+    transform: scale(0.95);
 }
 
 .add-button {
@@ -157,17 +186,17 @@
     color: #fff;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
+    cursor: pointer!important;
     font-size: 1rem;
     transition: background-color 0.3s;
 }
 
-.delete-button:hover {
-    background-color: #c0392b; /* Darker red when hovered */
+.add-button:hover {
+    background-color: #555;
 }
 
-.delete-button:active {
-    transform: scale(0.95); /* Slightly shrink button when clicked */
+.add-button:active {
+    transform: scale(0.95);
 }
 
 /* USERS */
@@ -190,8 +219,96 @@
     width: 100%;
 }
 
+.admin-table-container-movie .admin-table-body tr:hover {
+    background-color: #f4f4f4;
+    cursor: default;
+}
+
 .admin-details-movie {
     width: calc(100% - 2rem);
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+
+.column-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+    display: block;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.input-field,
+.select-field {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.textarea-field {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s;
+    outline: none;
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+.select-multiple {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+    height: 120px;
+}
+
+.button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.form-button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.admin-container ul{
+    padding-left: 10px;
+    margin: 0;
 }
 
 /* LANGUAGE */

@@ -28,12 +28,29 @@ export const updateUser = async (userId, updatedUserData) => {
 
 export const fetchMovies = async () => {
     const response = await axiosInstance.get('/movies');
-    console.log(response.data);
     return response.data;
 };
 
+// export const addMovie = async (movieData) => {
+//     try {
+//         const response = await axiosInstance.post('/movies', movieData);
+//         return response.data;
+//     } catch (error) {
+//         if (error.response && error.response.data) {
+//             throw new Error(error.response.data);
+//         } else {
+//             throw new Error("An unexpected error occurred");
+//         }
+//     }
+// };
+
 export const addMovie = async (movieData) => {
-    const response = await axiosInstance.post('/movies', movieData);
+    const response = await axiosInstance.put(`/movies`, movieData);
+    return response.data;
+};
+
+export const updateMovie = async (movieData) => {
+    const response = await axiosInstance.put(`/movies/${movieData.id}`, movieData);
     return response.data;
 };
 
