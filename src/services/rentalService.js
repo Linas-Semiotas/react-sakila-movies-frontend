@@ -2,7 +2,7 @@ import createAxiosInstance from './axiosInstance';
 
 const axiosInstance = createAxiosInstance('/api/rental');
 
-const getAllRentals = async () => {
+export const getAllRentals = async () => {
     try {
         const response = await axiosInstance.get('');
         return response.data;
@@ -12,7 +12,7 @@ const getAllRentals = async () => {
     }
 };
 
-const getRentalById = async (id) => {
+export const getRentalById = async (id) => {
     try {
         const response = await axiosInstance.get(`/${id}`);
         return response.data;
@@ -22,9 +22,12 @@ const getRentalById = async (id) => {
     }
 };
 
-const rentalService = {
-    getAllRentals,
-    getRentalById
+export const rentMovie = async (id) => {
+    try {
+        const response = await axiosInstance.post(`/rent`, { id });
+        return response;
+    } catch (error) {
+        console.error(`Error renting movie with ID ${id}:`, error.response ? error.response.data : error.message);
+        throw error;
+    }
 };
-
-export default rentalService;

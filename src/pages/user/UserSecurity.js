@@ -45,9 +45,11 @@ const UserSecurity = () => {
             <h2>Change Password</h2>
             <form className="security-form" onSubmit={handleSubmit}>
                 <div className="input-group">
-                    <label>Current Password</label>
+                    <label htmlFor='current-password'>Current Password</label>
                     <div className="input-wrapper">
                         <input
+                            id='current-password'
+                            name='current-password'
                             placeholder='Current password'
                             type={showPassword ? "text" : "password"}
                             value={currentPassword}
@@ -61,9 +63,11 @@ const UserSecurity = () => {
                     </div>
                 </div>
                 <div className="input-group">
-                    <label>New Password</label>
+                    <label htmlFor='new-password'>New Password</label>
                     <div className="input-wrapper">
                         <input
+                            id='new-password'
+                            name='new-password'
                             placeholder='New password'
                             type={showPassword ? "text" : "password"}
                             value={newPassword}
@@ -77,9 +81,11 @@ const UserSecurity = () => {
                     </div>
                 </div>
                 <div className="input-group">
-                    <label>Repeat New Password</label>
+                    <label htmlFor='repeat-new-password'>Repeat New Password</label>
                     <div className="input-wrapper">
                         <input
+                            id='repeat-new-password'
+                            name='repeat-new-password'
                             placeholder='New password'
                             type={showPassword ? "text" : "password"}
                             value={newRepeatPassword}

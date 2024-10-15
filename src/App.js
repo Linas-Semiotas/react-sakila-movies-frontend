@@ -6,6 +6,7 @@ import Home from './pages/main/Home';
 import Movies from './pages/main/Movies';
 import Movie from './pages/main/Movie';
 import Rental from './pages/main/Rental';
+import Rent from './pages/main/Rent';
 import Stores from './pages/main/Stores';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -66,6 +67,7 @@ const App = () => {
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/movies/:id" element={<Movie />} />
                     <Route path="/rental" element={<PrivateRoute><Rental /></PrivateRoute>} />
+                    <Route path="/rental/:id" element={<PrivateRoute><Rent /></PrivateRoute>} />
                     <Route path="/stores" element={<Stores />} />
                     <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess}/>} />
                     <Route path="/register" element={<Register />} />

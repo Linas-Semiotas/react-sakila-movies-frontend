@@ -40,22 +40,26 @@ const Login = ({onLoginSuccess}) => {
                 <form onSubmit={handleLogin}>
                     <div className="input-single">
                         <input
+                            name='username'
                             placeholder='Username'
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             maxLength={30}
                             required
+                            autocomplete="username"
                         />
                     </div>
                     <div className="input-group">
                         <input
+                            name='password'
                             placeholder='Password'
                             type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             maxLength={64}
                             required
+                            autocomplete="current-password"
                         />
                         <span 
                             onClick={togglePasswordVisibility}

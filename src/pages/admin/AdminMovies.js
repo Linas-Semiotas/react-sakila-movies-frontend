@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, fetchMovies, fetchCategories, fetchActors, addMovie, updateMovie, deleteMovie } from '../../services/adminService';
+import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminMovies = () => {
     const [languages, setLanguages] = useState([]);
@@ -41,6 +42,8 @@ const AdminMovies = () => {
     const [filteredMovies, setFilteredMovies] = useState([]);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     const ratings = ['G', 'PG', 'PG_13', 'R', 'NC_17'];
 
@@ -207,6 +210,20 @@ const AdminMovies = () => {
         }
     };
 
+    const handleDeleteClick = (id) => {
+        setItemToDelete(id);
+        setShowModal(true);
+    };
+
+    const handleConfirmDelete = () => {
+        handleDeleteMovie(itemToDelete);
+        setShowModal(false);
+    };
+
+    const handleCancelDelete = () => {
+        setShowModal(false);
+    };
+
     return (
         <div>
             <div className="admin-container">
@@ -215,6 +232,8 @@ const AdminMovies = () => {
                     <div className="admin-table-container admin-table-container-movie">
                         <div className="input-wrapper search">
                             <input
+                                name='search'
+                                maxLength={50}
                                 type="text"
                                 placeholder="Search movies..."
                                 value={search}
@@ -246,7 +265,7 @@ const AdminMovies = () => {
                                             <td style={{ width: '13%' }}>{movie.rating}</td>
                                             <td style={{ width: '23%' }}>
                                                 <button className='update-button' onClick={() => handleRowClick(movie)}>Update</button>
-                                                <button className='delete-button' onClick={() => handleDeleteMovie(movie.id)}>Delete</button>
+                                                <button className='delete-button' onClick={() => handleDeleteClick(movie.id)}>Delete</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -255,6 +274,13 @@ const AdminMovies = () => {
                         </div>
                     </div>
                 </div>
+                <ConfirmationWindow
+                    show={showModal}
+                    name="Confirm delete"
+                    message="Are you sure you want to delete this movie?"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                />
             </div>
             <div className="admin-container">
                 <h3>{showAddForm ? "Add New Movie" : "Edit Movie Details"}</h3>
@@ -262,6 +288,8 @@ const AdminMovies = () => {
                     <div className="column-item">
                         <label className="form-label" htmlFor="title">Title</label>
                         <input
+                            id="title"
+                            maxLength={50}
                             type="text"
                             placeholder="Title"
                             name="title"
@@ -272,6 +300,7 @@ const AdminMovies = () => {
 
                         <label className="form-label" htmlFor="language">Language</label>
                         <select
+                            id="language"
                             name="language"
                             value={showAddForm ? newMovie.language : editMovie.language}
                             onChange={(e) => handleInputChange(e, !showAddForm)}
@@ -285,21 +314,43 @@ const AdminMovies = () => {
 
                         <label className="form-label" htmlFor="filmLength">Length</label>
                         <input
-                            type="text"
+                            id="filmLength"
+                            max={600}
+                            type="number"
                             placeholder="Length"
                             name="filmLength"
                             value={showAddForm ? newMovie.filmLength : editMovie.filmLength}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
+                            onChange={(e) => {
+                                let value = parseInt(e.target.value, 10);
+                                if (value > 999) {
+                                    value = 999;
+                                }
+                                if (value >= 0 && value <= 999) {
+                                    e.target.value = value;
+                                    handleInputChange(e, !showAddForm);
+                                }
+                            }}
                             className="input-field"
                         />
 
                         <label className="form-label" htmlFor="rentalDuration">Rental Duration</label>
                         <input
-                            type="text"
+                            id="rentalDuration"
+                            max={365}
+                            type="number"
                             placeholder="Rental Duration"
                             name="rentalDuration"
                             value={showAddForm ? newMovie.rentalDuration : editMovie.rentalDuration}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
+                            onChange={(e) => {
+                                let value = parseInt(e.target.value, 10);
+                                if (value > 365) {
+                                    value = 365;
+                                }
+                                if (value >= 0 && value <= 365) {
+                                    e.target.value = value;
+                                    handleInputChange(e, !showAddForm);
+                                }
+                            }}
                             className="input-field"
                         />
                     </div>
@@ -307,16 +358,28 @@ const AdminMovies = () => {
                     <div className="column-item">
                         <label className="form-label" htmlFor="releaseYear">Release Year</label>
                         <input
-                            type="text"
+                            id="releaseYear"
+                            max={2100}
+                            type="number"
                             placeholder="Release Year"
                             name="releaseYear"
                             value={showAddForm ? newMovie.releaseYear : editMovie.releaseYear}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
+                            onChange={(e) => {
+                                let value = parseInt(e.target.value, 10);
+                                if (value > 2100) {
+                                    value = 2100;
+                                }
+                                if (value >= 0 && value <= 2100) {
+                                    e.target.value = value;
+                                    handleInputChange(e, !showAddForm);
+                                }
+                            }}
                             className="input-field"
                         />
 
                         <label className="form-label" htmlFor="rating">Rating</label>
                         <select
+                            id="rating"
                             name="rating"
                             value={showAddForm ? newMovie.rating : editMovie.rating}
                             onChange={(e) => handleInputChange(e, !showAddForm)}
@@ -330,21 +393,43 @@ const AdminMovies = () => {
      
                         <label className="form-label" htmlFor="replacementCost">Replacement Cost</label>
                         <input
-                            type="text"
+                            id="replacementCost"
+                            max={999}
+                            type="number"
                             placeholder="Replacement Cost"
                             name="replacementCost"
                             value={showAddForm ? newMovie.replacementCost : editMovie.replacementCost}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
+                            onChange={(e) => {
+                                let value = parseInt(e.target.value, 10);
+                                if (value > 999) {
+                                    value = 999;
+                                }
+                                if (value >= 0 && value <= 999) {
+                                    e.target.value = value;
+                                    handleInputChange(e, !showAddForm);
+                                }
+                            }}
                             className="input-field"
                         />
 
                         <label className="form-label" htmlFor="rentalRate">Rental Rate</label>
                         <input
-                            type="text"
+                            id="rentalRate"
+                            max={999}
+                            type="number"
                             placeholder="Rental Rate"
                             name="rentalRate"
                             value={showAddForm ? newMovie.rentalRate : editMovie.rentalRate}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
+                            onChange={(e) => {
+                                let value = parseInt(e.target.value, 10);
+                                if (value > 999) {
+                                    value = 999;
+                                }
+                                if (value >= 0 && value <= 999) {
+                                    e.target.value = value;
+                                    handleInputChange(e, !showAddForm);
+                                }
+                            }}
                             className="input-field"
                         />
                     </div>
@@ -353,6 +438,8 @@ const AdminMovies = () => {
                 <div className="full-width-item">
                     <label className="form-label" htmlFor="description">Description</label>
                     <textarea
+                        id="description"
+                        maxLength={255}
                         placeholder="Description"
                         name="description"
                         value={showAddForm ? newMovie.description : editMovie.description}
@@ -364,6 +451,8 @@ const AdminMovies = () => {
                 <div className="full-width-item">
                     <label className="form-label" htmlFor="specialFeatures">Special Features</label>
                     <input
+                        id="specialFeatures"
+                        maxLength={255}
                         placeholder="Special Features"
                         name="specialFeatures"
                         value={showAddForm ? newMovie.specialFeatures : editMovie.specialFeatures}
@@ -378,6 +467,7 @@ const AdminMovies = () => {
 
                         <label className="form-label" htmlFor="actors">Actors</label>
                         <select
+                            id="actors"
                             name="actors"
                             multiple
                             value={showAddForm ? newMovie.actors : editMovie.actors}
@@ -389,7 +479,7 @@ const AdminMovies = () => {
                             ))}
                         </select>
 
-                        <label className="form-label">Selected Actors:</label>
+                        <div className="form-label">Selected Actors:</div>
                         <ul>
                             {(showAddForm ? newMovie.actors : editMovie.actors).map(actor => (
                                 <li key={actor} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -411,6 +501,7 @@ const AdminMovies = () => {
 
                         <label className="form-label" htmlFor="category">Categories</label>
                         <select
+                            id="category"
                             name="category"
                             multiple
                             value={showAddForm ? newMovie.category : editMovie.category}
@@ -422,7 +513,7 @@ const AdminMovies = () => {
                             ))}
                         </select>
 
-                        <label className="form-label">Selected Categories:</label>
+                        <div className="form-label">Selected Categories:</div>
                         <ul>
                             {(showAddForm ? newMovie.category : editMovie.category).map(categ => (
                                 <li key={categ} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

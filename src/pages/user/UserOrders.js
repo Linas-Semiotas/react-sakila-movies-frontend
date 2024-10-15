@@ -72,6 +72,9 @@ const UserOrders = () => {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
+                    SelectProps={{
+                        inputProps: { id: 'rows-per-page', name: 'rows-per-page' }
+                    }}
                 />
             </Paper>
         </div>

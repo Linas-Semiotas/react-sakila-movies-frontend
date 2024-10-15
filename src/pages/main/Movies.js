@@ -60,15 +60,22 @@ const Movies = () => {
                         <FontAwesomeIcon icon={faFilter} />
                         &nbsp;Filter
                     </div>
-                    <input className='search' placeholder='Search' value={searchTerm} 
-                        onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}}/>
+                    <input
+                        maxLength={100}
+                        name='search'
+                        className='search'
+                        placeholder='Search'
+                        value={searchTerm} 
+                        onChange={(e) => {setSearchTerm(e.target.value); setCurrentPage(1);}}
+                    />
                 </div>
                 <div>
                     {isFilterOpen && (
                         <div className='filter-container'>
                             <div className='filter-options'>
-                                <label>Language</label><br />
-                                <select id="language"
+                                <label htmlFor='language'>Language</label><br />
+                                <select
+                                    id="language"
                                     value={selectedLanguage}
                                     onChange={(e) => {setSelectedLanguage(e.target.value); setCurrentPage(1);}}
                                 >
@@ -79,8 +86,9 @@ const Movies = () => {
                                 </select>
                             </div>
                             <div className='filter-options'>
-                                <label>Category</label><br />
-                                <select id="category"
+                                <label htmlFor='category'>Category</label><br />
+                                <select
+                                    id="category"
                                     value={selectedCategory}
                                     onChange={(e) => {setSelectedCategory(e.target.value); setCurrentPage(1);}}
                                 >
@@ -91,8 +99,9 @@ const Movies = () => {
                                 </select>
                             </div>
                             <div className='filter-options'>
-                            <label>Year</label><br />
-                                <select id="year"
+                            <label htmlFor='year'>Year</label><br />
+                                <select
+                                    id="year"
                                     value={selectedYear}
                                     onChange={(e) => {setSelectedYear(e.target.value); setCurrentPage(1);}}
                                 >

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, addLanguage, deleteLanguage } from '../../services/adminService';
+import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminLanguages = () => {
     const [languages, setLanguages] = useState([]);
     const [newLanguage, setNewLanguage] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         fetchLanguages()
@@ -45,6 +48,20 @@ const AdminLanguages = () => {
         }
     };
 
+    const handleDeleteClick = (id) => {
+        setItemToDelete(id);
+        setShowModal(true);
+    };
+
+    const handleConfirmDelete = () => {
+        handleDeleteLanguage(itemToDelete);
+        setShowModal(false);
+    };
+
+    const handleCancelDelete = () => {
+        setShowModal(false);
+    };
+
     return (
         <div className="admin-container">
             <h2>Languages</h2>
@@ -55,6 +72,7 @@ const AdminLanguages = () => {
                             <tr>
                                 <th style={{ width: '70%', textAlign: 'left' }}>Language</th>
                                 <th style={{ width: '30%' }}>Action</th>
+                                <td className='filler'></td>
                             </tr>
                         </thead>
                     </table>
@@ -65,7 +83,7 @@ const AdminLanguages = () => {
                                     <tr key={lang.id}>
                                         <td style={{ width: '70%', textAlign: 'left' }}>{lang.name}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleDeleteLanguage(lang.id)}>Delete</button>
+                                            <button className="delete-button" onClick={() => handleDeleteClick(lang.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -77,6 +95,8 @@ const AdminLanguages = () => {
                     <h3>Add New Language</h3>
                     <div className="input-wrapper">
                         <input
+                            name='language'
+                            maxLength={50}
                             type="text"
                             placeholder="New Language"
                             value={newLanguage}
@@ -87,6 +107,13 @@ const AdminLanguages = () => {
                     </div>
                 </div>
             </div>
+            <ConfirmationWindow
+                show={showModal}
+                name="Confirm delete"
+                message="Are you sure you want to delete this language?"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+            />
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
         </div>

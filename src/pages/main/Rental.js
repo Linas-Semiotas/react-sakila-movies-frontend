@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Rental.css';
-import rentalService from '../../services/rentalService';
+import { getAllRentals } from '../../services/rentalService';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TablePagination, Paper, TableSortLabel
@@ -14,12 +15,13 @@ const Rental = () => {
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('title');
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        rentalService.getAllRentals()
+        getAllRentals()
             .then(data => setRental(data))
             .catch(err => setError(err));
-    }, []);
+        }, []);
 
     const handleRequestSort = (property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -63,8 +65,14 @@ const Rental = () => {
             <div className='page-title'>Rental</div>
             <div className="rental-container">
                 <div className='list-header'>
-                    <input className='search' placeholder='Search' value={searchTerm} 
-                        onChange={(e) => {setSearchTerm(e.target.value); setPage(0);}}/>
+                    <input
+                        maxLength={100}
+                        name='search'
+                        className='search'
+                        placeholder='Search'
+                        value={searchTerm} 
+                        onChange={(e) => {setSearchTerm(e.target.value); setPage(0);}}
+                    />
                 </div>
                 {error && <p className="error-message">Error fetching rentals: {error.message}</p>}
                 <Paper>
@@ -112,7 +120,11 @@ const Rental = () => {
                             </TableHead>
                             <TableBody>
                                 {paginatedRentals.map((row, index) => (
-                                    <TableRow key={index}>
+                                    <TableRow
+                                        key={index}
+                                        onClick={() => navigate(`/rental/${row.id}`)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         <TableCell>{row.title}</TableCell>
                                         <TableCell>{row.rentalRate} $</TableCell>
                                         <TableCell>{row.replacementCost} $</TableCell>
@@ -130,6 +142,9 @@ const Rental = () => {
                         page={page}
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
+                        SelectProps={{
+                            inputProps: { id: 'rows-per-page', name: 'rows-per-page' }
+                        }}
                     />
                 </Paper>
             </div>

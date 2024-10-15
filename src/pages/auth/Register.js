@@ -74,7 +74,7 @@ const Register = () => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            maxLength={254}
+                            maxLength={255}
                             required
                         />
                     </div>

@@ -3,7 +3,6 @@ import { getBalance, addBalance } from '../../services/userService.js';
 
 const UserBalance = () => {
     const [balance, setBalance] = useState(0.0);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -11,10 +10,8 @@ const UserBalance = () => {
             try {
                 const currentBalance = await getBalance();
                 setBalance(currentBalance);
-                setLoading(false);
             } catch (err) {
                 setError('Error fetching balance');
-                setLoading(false);
             }
         }
 
@@ -30,10 +27,6 @@ const UserBalance = () => {
             setError('Error updating balance');
         }
     };
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
 
     return (
         <div className="user-container">

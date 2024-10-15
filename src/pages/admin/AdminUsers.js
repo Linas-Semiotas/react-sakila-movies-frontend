@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUsers, updateUser } from '../../services/adminService';
+import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -9,6 +10,7 @@ const AdminUsers = () => {
     const [search, setSearch] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     // Fetch users when the component mounts
     useEffect(() => {
@@ -93,6 +95,19 @@ const AdminUsers = () => {
         }
     };
 
+    const handleSaveClick = () => {
+        setShowModal(true);
+    };
+
+    const handleConfirmSave = () => {
+        saveChanges();
+        setShowModal(false);
+    };
+
+    const handleCancelSave = () => {
+        setShowModal(false);
+    };
+
     return (
         <div className="admin-container">
             <h2>Permissions</h2>
@@ -100,6 +115,8 @@ const AdminUsers = () => {
                 <div className="admin-table-container">
                     <div className="input-wrapper search">
                         <input
+                            name='search'
+                            maxLength={50}
                             type="text"
                             placeholder="Search users..."
                             value={search}
@@ -113,6 +130,7 @@ const AdminUsers = () => {
                                 <th onClick={() => toggleFilter('user')} style={{ backgroundColor: getButtonColor('user', filter.user), width: '17%', cursor: 'pointer' }}>User</th>
                                 <th onClick={() => toggleFilter('admin')} style={{ backgroundColor: getButtonColor('admin', filter.admin), width: '17%', cursor: 'pointer' }}>Admin</th>
                                 <th onClick={() => toggleFilter('enabled')} style={{ backgroundColor: getButtonColor('enabled', filter.enabled), width: '17%', cursor: 'pointer' }}>Enabled</th>
+                                <td className='filler'></td>
                             </tr>
                         </thead>
                     </table>
@@ -135,8 +153,9 @@ const AdminUsers = () => {
                     <div className="admin-details">
                         <h3>{selectedUser.username}</h3>
                         <div className="checkbox-row">
-                            <label>User</label>
+                            <label htmlFor='userRole'>User</label>
                             <input
+                                id="userRole"
                                 type="checkbox"
                                 name="userRole"
                                 checked={selectedUser.userRole}
@@ -144,8 +163,9 @@ const AdminUsers = () => {
                             />
                         </div>
                         <div className="checkbox-row">
-                            <label>Admin</label>
+                            <label htmlFor='adminRole'>Admin</label>
                             <input
+                                id="adminRole"
                                 type="checkbox"
                                 name="adminRole"
                                 checked={selectedUser.adminRole}
@@ -153,20 +173,28 @@ const AdminUsers = () => {
                             />
                         </div>
                         <div className="checkbox-row">
-                            <label>Enabled</label>
+                            <label htmlFor='enabled'>Enabled</label>
                             <input
+                                id='enabled'
                                 type="checkbox"
                                 name="enabled"
                                 checked={selectedUser.enabled}
                                 onChange={handleCheckboxChange}
                             />
                         </div>
-                        <button className="submit-button" onClick={saveChanges}>Save Changes</button>
+                        <button className="submit-button" onClick={handleSaveClick}>Save Changes</button>
                     </div>                
                 )}
             </div>
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
+            <ConfirmationWindow
+                show={showModal}
+                name="Confirmation"
+                message="Are you sure you want to update user?"
+                onConfirm={handleConfirmSave}
+                onCancel={handleCancelSave}
+            />
         </div>
     );
 };

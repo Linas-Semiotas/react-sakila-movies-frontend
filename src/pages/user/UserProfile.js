@@ -87,50 +87,60 @@ const UserProfile = () => {
                 <h2>Personal Info</h2>
                 <form onSubmit={handlePersonalInfoSubmit}>
                     <div className="input-group">
-                        <label>First Name:</label>
+                        <label htmlFor='firstName'>First Name:</label>
                         <div className="input-wrapper">
-                            <input 
+                            <input
+                                id='firstName'
+                                maxLength={50}
                                 placeholder='First name'
                                 type="text" 
                                 name="firstName" 
                                 value={personalInfo.firstName || ''} 
-                                onChange={handlePersonalInfoChange} 
+                                onChange={handlePersonalInfoChange}
                             />
                         </div>
                     </div>
                     <div className="input-group">
-                        <label>Last Name:</label>
+                        <label htmlFor='lastName'>Last Name:</label>
                         <div className="input-wrapper">
-                            <input 
+                            <input
+                                id='lastName'
+                                maxLength={50}
                                 placeholder='Last name'
                                 type="text" 
                                 name="lastName" 
                                 value={personalInfo.lastName || ''} 
-                                onChange={handlePersonalInfoChange} 
+                                onChange={handlePersonalInfoChange}
                             />
                         </div>
                     </div>
                     <div className="input-group">
-                        <label>Email:</label>
+                        <label htmlFor='email'>Email:</label>
                         <div className="input-wrapper">
-                            <input 
+                            <input
+                                id='email'
+                                maxLength={255}
                                 placeholder='Email'
                                 type="email" 
                                 name="email" 
                                 value={personalInfo.email || ''} 
                                 onChange={handlePersonalInfoChange} 
+                                autocomplete="off"
                             />
                         </div>
                     </div>
                     <div className="input-group">
-                        <label>Phone:</label>
+                        <label htmlFor='phone'>Phone:</label>
                         <div className="input-wrapper">
-                            <input 
+                            <input
+                                id='phone'
+                                maxLength={255}
                                 placeholder='Phone number'
                                 type="tel" 
                                 name="phone" 
                                 value={personalInfo.phone || ''} 
                                 onChange={handlePersonalInfoChange} 
+                                autocomplete="off"
                             />
                         </div>
                     </div>
@@ -144,38 +154,47 @@ const UserProfile = () => {
                 <h2>Address Info</h2>
                 <form onSubmit={handleAddressInfoSubmit}>
                     <div className="input-group">
-                        <label>Address:</label>
-                        <input 
+                        <label htmlFor='address'>Address:</label>
+                        <input
+                            id='address'
+                            maxLength={255}
                             placeholder='Address'
                             type="text" 
                             name="address" 
                             value={addressInfo.address || ''} 
                             onChange={handleAddressInfoChange} 
+                            autocomplete="off"
                         />
                     </div>
                     <div className="input-group">
-                        <label>District:</label>
-                        <input 
+                        <label htmlFor='district'>District:</label>
+                        <input
+                            id='district'
+                            maxLength={255}
                             placeholder='District'
                             type="text" 
                             name="district" 
                             value={addressInfo.district || ''} 
-                            onChange={handleAddressInfoChange} 
+                            onChange={handleAddressInfoChange}
                         />
                     </div>
                     <div className="input-group">
-                        <label>Postal Code:</label>
-                        <input 
+                        <label htmlFor='postCode'>Postal Code:</label>
+                        <input
+                            id='postCode'
+                            maxLength={255}
                             placeholder='Postal Code'
                             type="text" 
                             name="postalCode" 
                             value={addressInfo.postalCode || ''} 
-                            onChange={handleAddressInfoChange} 
+                            onChange={handleAddressInfoChange}
                         />
                     </div>
                     <div className="input-group">
-                        <label>City:</label>
-                        <input 
+                        <label htmlFor='city'>City:</label>
+                        <input
+                            id='city'
+                            maxLength={255}
                             placeholder='City'
                             type="text" 
                             name="city" 
@@ -184,13 +203,16 @@ const UserProfile = () => {
                         />
                     </div>
                     <div className="input-group">
-                        <label>Country:</label>
-                        <input 
+                        <label htmlFor='country'>Country:</label>
+                        <input
+                            id='country'
+                            maxLength={255}
                             placeholder='Country'
                             type="text" 
                             name="country" 
                             value={addressInfo.country || ''} 
-                            onChange={handleAddressInfoChange} 
+                            onChange={handleAddressInfoChange}
+                            autocomplete="off"
                         />
                     </div>
                     <button className="submit-button" type="submit">Save Changes</button>

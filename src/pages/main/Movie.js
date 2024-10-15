@@ -53,7 +53,7 @@ const Movie = () => {
                         </div>
                     </div>
                     <p className="movie-description">{movie.description}</p>
-                    <Link to={`/rental/${movie.id}`} key={movie.id}>Rent</Link>
+                    <Link to={`/rental/${movie.id}`} key={movie.id} className='link-button'>Go to rent page</Link>
                 </div>
             ) : (
                 <p>No movie found.</p>
