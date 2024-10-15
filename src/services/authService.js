@@ -1,10 +1,7 @@
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const API_URL = 'http://localhost:8080/api/auth';
-
-export const getToken = () => {
-    return localStorage.getItem('token');
-};
 
 axios.interceptors.response.use(
     response => response,
@@ -15,6 +12,23 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
+export const getToken = () => {
+    return localStorage.getItem('token');
+};
+
+export const getUserRoles = () => {
+    const token = getToken();
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode(token);
+        return decoded.roles || [];
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+};
 
 export const login = async (username, password) => {
     const response = await axios.post(`${API_URL}/login`, {

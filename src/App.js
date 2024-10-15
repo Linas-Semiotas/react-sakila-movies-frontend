@@ -13,6 +13,7 @@ import Register from './pages/auth/Register';
 import User from './pages/user/User';
 import Admin from './pages/admin/Admin';
 import Notes from './components/Notes';
+import Unauthorized from './pages/other/Unauthorized';
 import NotFound from './pages/other/NotFound';
 import PrivateRoute from './components/PrivateRoute';
 import { getToken, logout } from './services/authService';
@@ -71,9 +72,10 @@ const App = () => {
                     <Route path="/stores" element={<Stores />} />
                     <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess}/>} />
                     <Route path="/register" element={<Register />} />
-                    <Route path="/user/*" element={<PrivateRoute><User /></PrivateRoute>} />
-                    <Route path="/admin/*" element={<PrivateRoute><Admin /></PrivateRoute>} />
+                    <Route path="/user/*" element={<PrivateRoute requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
+                    <Route path="/admin/*" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
                     <Route path="/TODO" element={<Notes />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

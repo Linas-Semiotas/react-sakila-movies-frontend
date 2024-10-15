@@ -47,7 +47,7 @@ const Login = ({onLoginSuccess}) => {
                             onChange={(e) => setUsername(e.target.value)}
                             maxLength={30}
                             required
-                            autocomplete="username"
+                            autoComplete="username"
                         />
                     </div>
                     <div className="input-group">
@@ -59,7 +59,7 @@ const Login = ({onLoginSuccess}) => {
                             onChange={(e) => setPassword(e.target.value)}
                             maxLength={64}
                             required
-                            autocomplete="current-password"
+                            autoComplete="current-password"
                         />
                         <span 
                             onClick={togglePasswordVisibility}
