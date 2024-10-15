@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Box, Card, CardContent, Typography, Pagination } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import '../../styles/Movies.css';
-import movieService from '../../services/movieService';
+import { getAllMovies } from '../../services/movieService';
+import Utils from '../../components/Utility';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,9 +19,9 @@ const Movies = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        movieService.getAllMovies()
+        getAllMovies()
             .then(data => setMovies(data))
-            .catch(err => setError(err));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching movies'));
     }, []);
 
     const toggleFilter = () => {
@@ -55,6 +56,7 @@ const Movies = () => {
         <div>
             <div className='page-title'>Movies</div>
             <div className="movies-container">
+                {error && <p  className="error-message">{error.message}</p>}
                 <div className='gallery-header'>
                     <div onClick={toggleFilter} className='filter-button'>
                         <FontAwesomeIcon icon={faFilter} />
@@ -113,7 +115,6 @@ const Movies = () => {
                             </div>
                         </div>
                     )}
-                    {error && <p  className="error-message">{error.message}</p>}
                 </div>
                 <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2} sx={{ width: "100%", margin: 0, paddingRight: 2}}>

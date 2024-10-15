@@ -1,34 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import '../../styles/Movie.css';
-import movieService from '../../services/movieService';
+import { getMovieById } from '../../services/movieService';
+import Utils from '../../components/Utility';
 
 const Movie = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        setLoading(true);
-        movieService.getMovieById(id)
-            .then(data => {
-                setMovie(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err);
-                setLoading(false);
-            });
+        getMovieById(id)
+            .then(data => setMovie(data))
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching movie'));
     }, [id]);
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (error) {
-        return <p className="error-message">Error fetching movie: {error.message}</p>;
-    }
 
     return (
         <div className="movie-container">
@@ -55,9 +40,8 @@ const Movie = () => {
                     <p className="movie-description">{movie.description}</p>
                     <Link to={`/rental/${movie.id}`} key={movie.id} className='link-button'>Go to rent page</Link>
                 </div>
-            ) : (
-                <p>No movie found.</p>
-            )}
+            ) : null}
+            {error && <p  className="error-message">{error}</p>}
         </div>
     );
 };

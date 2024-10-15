@@ -19,12 +19,13 @@ import PrivateRoute from './components/PrivateRoute';
 import { getToken, getUserRoles, getUsername, logout } from './services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faBars } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
     const [userRoles, setUserRoles] = useState([]);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
 
@@ -64,9 +65,8 @@ const App = () => {
         setShowDropdown(false);
     }, [isLoggedIn]);
 
-    const handleLoginSuccess = () => {
-        setIsLoggedIn(true);
-        setUserRoles(getUserRoles());
+    const toggleMobileMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
 
     const toggleDropdown = () => {
@@ -84,6 +84,19 @@ const App = () => {
                     <Link to="/stores">Stores</Link>
                     <Link to="/TODO">TODO</Link>
                 </nav>
+                <div className="hamburger-icon" onClick={toggleMobileMenu}>
+                    <FontAwesomeIcon icon={faBars} />
+                    <span>Menu</span>
+                </div>
+                {isMenuOpen && (
+                    <div className="mobile-menu">
+                        <Link onClick={toggleMobileMenu} to="/home">Home</Link>
+                        <Link onClick={toggleMobileMenu} to="/movies">Movies</Link>
+                        <Link onClick={toggleMobileMenu} to="/rental">Rental</Link>
+                        <Link onClick={toggleMobileMenu} to="/stores">Stores</Link>
+                        <Link onClick={toggleMobileMenu} to="/TODO">TODO</Link>
+                    </div>
+                )}
                 <div className="header-space-150 header-space-150-end">
                     {isLoggedIn ? (
                         <div className="profile-dropdown">
@@ -123,7 +136,7 @@ const App = () => {
                     <Route path="/rental" element={<PrivateRoute><Rental /></PrivateRoute>} />
                     <Route path="/rental/:id" element={<PrivateRoute><Rent /></PrivateRoute>} />
                     <Route path="/stores" element={<Stores />} />
-                    <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess}/>} />
+                    <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/user/*" element={<PrivateRoute requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
                     <Route path="/admin/*" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />

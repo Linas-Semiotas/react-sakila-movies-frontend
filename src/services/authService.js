@@ -79,7 +79,7 @@ export const register = async (username, password, firstName, lastName, email, s
         email,
         storeId
     });
-    return response;
+    return response.data;
 };
 
 export const logout = async () => {

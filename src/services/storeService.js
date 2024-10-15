@@ -1,19 +1,8 @@
-import axios from 'axios';
+import createAxiosInstance from './axiosInstance';
 
-const API_URL = 'http://localhost:8080/api/stores';
+const axiosInstance = createAxiosInstance('/api/stores');
 
-const getAllStores = async () => {
-    try {
-        const response = await axios.get(API_URL);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching stores:', error.response ? error.response.data : error.message);
-        throw error;
-    }
+export const getAllStores = async () => {
+    const response = await axiosInstance.get('');
+    return response.data;
 };
-
-const storeService = {
-    getAllStores
-};
-
-export default storeService;

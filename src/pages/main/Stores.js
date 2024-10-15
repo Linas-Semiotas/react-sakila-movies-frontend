@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/Stores.css';
-import storeService from '../../services/storeService';
+import { getAllStores } from '../../services/storeService';
+import Utils from '../../components/Utility';
 
 const Stores = () => {
     const [stores, setStores] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        storeService.getAllStores()
+        getAllStores()
             .then(data => setStores(data))
-            .catch(err => setError(err));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching stores'));
     }, []);
 
     return (

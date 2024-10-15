@@ -42,7 +42,6 @@ const Notes = () => {
                 <input
                     id="addTODO"
                     type="text"
-                    maxLength="69"
                     value={newTodo}
                     onChange={handleInputChange}
                     placeholder="Add a new task"

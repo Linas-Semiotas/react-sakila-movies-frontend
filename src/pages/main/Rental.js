@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Rental.css';
 import { getAllRentals } from '../../services/rentalService';
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    TablePagination, Paper, TableSortLabel
-} from '@mui/material';
+import Utils from '../../components/Utility';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
 
 const Rental = () => {
     const [rental, setRental] = useState([]);
@@ -20,7 +18,7 @@ const Rental = () => {
     useEffect(() => {
         getAllRentals()
             .then(data => setRental(data))
-            .catch(err => setError(err));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching rentals'));
         }, []);
 
     const handleRequestSort = (property) => {

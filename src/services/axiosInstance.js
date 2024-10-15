@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { getToken } from './authService';
 
-// Function to create an Axios instance with a custom base URL
 const createAxiosInstance = (endpoint) => {
     const axiosInstance = axios.create({
         baseURL: 'http://localhost:8080' + endpoint,
@@ -20,6 +19,28 @@ const createAxiosInstance = (endpoint) => {
             return config;
         },
         (error) => Promise.reject(error)
+    );
+
+    // Add a response interceptor to handle global errors
+    axiosInstance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            const { response } = error;
+            if (response) {
+                if (response.status === 401) {
+                    console.error(`Error ${response.status}: ${response.data.message || 'Unauthorized access. Please log in.'}`);
+                } else if (response.status === 403) {
+                    console.error(`Error ${response.status}: ${response.data.message || 'Forbidden: Access is denied.'}`);
+                } else if (response.status === 500) {
+                    console.error(`Error ${response.status}: ${response.data.message || 'Internal server error. Please try again later.'}`);
+                } else {
+                    console.error(`Error ${response.status}: ${response.data.message || 'An unknown error occurred.'}`);
+                }
+            } else {
+                console.error('Network error: Please check your connection or try again later.');
+            }
+            return Promise.reject(error);
+        }
     );
 
     return axiosInstance;

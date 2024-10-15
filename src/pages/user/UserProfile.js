@@ -125,7 +125,7 @@ const UserProfile = () => {
                                 name="email" 
                                 value={personalInfo.email || ''} 
                                 onChange={handlePersonalInfoChange} 
-                                autocomplete="off"
+                                autoComplete="off"
                             />
                         </div>
                     </div>
@@ -140,7 +140,7 @@ const UserProfile = () => {
                                 name="phone" 
                                 value={personalInfo.phone || ''} 
                                 onChange={handlePersonalInfoChange} 
-                                autocomplete="off"
+                                autoComplete="off"
                             />
                         </div>
                     </div>
@@ -163,7 +163,7 @@ const UserProfile = () => {
                             name="address" 
                             value={addressInfo.address || ''} 
                             onChange={handleAddressInfoChange} 
-                            autocomplete="off"
+                            autoComplete="off"
                         />
                     </div>
                     <div className="input-group">
@@ -212,7 +212,7 @@ const UserProfile = () => {
                             name="country" 
                             value={addressInfo.country || ''} 
                             onChange={handleAddressInfoChange}
-                            autocomplete="off"
+                            autoComplete="off"
                         />
                     </div>
                     <button className="submit-button" type="submit">Save Changes</button>

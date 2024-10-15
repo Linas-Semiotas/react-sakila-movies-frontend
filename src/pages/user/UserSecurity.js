@@ -7,12 +7,22 @@ const UserSecurity = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newRepeatPassword, setRepeatNewPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const toggleCurrentPasswordVisibility = () => {
+        setShowCurrentPassword(!showCurrentPassword);
+    };
+    
+    const toggleNewPasswordVisibility = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+    
+    const toggleRepeatPasswordVisibility = () => {
+        setShowRepeatPassword(!showRepeatPassword);
     };
 
     const handleSubmit = async (e) => {
@@ -51,14 +61,14 @@ const UserSecurity = () => {
                             id='current-password'
                             name='current-password'
                             placeholder='Current password'
-                            type={showPassword ? "text" : "password"}
+                            type={showCurrentPassword ? "text" : "password"}
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
                             maxLength={64}
                             required
                         />
-                        <span className='visibility-icon' onClick={togglePasswordVisibility}>
-                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                        <span className='visibility-icon' onClick={toggleCurrentPasswordVisibility}>
+                            <FontAwesomeIcon icon={showCurrentPassword ? faEye : faEyeSlash} />
                         </span>
                     </div>
                 </div>
@@ -69,14 +79,14 @@ const UserSecurity = () => {
                             id='new-password'
                             name='new-password'
                             placeholder='New password'
-                            type={showPassword ? "text" : "password"}
+                            type={showNewPassword ? "text" : "password"}
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             maxLength={64}
                             required
                         />
-                        <span className='visibility-icon' onClick={togglePasswordVisibility}>
-                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                        <span className='visibility-icon' onClick={toggleNewPasswordVisibility}>
+                            <FontAwesomeIcon icon={showNewPassword ? faEye : faEyeSlash} />
                         </span>
                     </div>
                 </div>
@@ -87,14 +97,14 @@ const UserSecurity = () => {
                             id='repeat-new-password'
                             name='repeat-new-password'
                             placeholder='New password'
-                            type={showPassword ? "text" : "password"}
+                            type={showRepeatPassword  ? "text" : "password"}
                             value={newRepeatPassword}
                             onChange={(e) => setRepeatNewPassword(e.target.value)}
                             maxLength={64}
                             required
                         />
-                        <span className='visibility-icon' onClick={togglePasswordVisibility}>
-                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                        <span className='visibility-icon' onClick={toggleRepeatPasswordVisibility}>
+                            <FontAwesomeIcon icon={showRepeatPassword  ? faEye : faEyeSlash} />
                         </span>
                     </div>
                 </div>

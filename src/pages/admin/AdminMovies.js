@@ -321,14 +321,17 @@ const AdminMovies = () => {
                             name="filmLength"
                             value={showAddForm ? newMovie.filmLength : editMovie.filmLength}
                             onChange={(e) => {
-                                let value = parseInt(e.target.value, 10);
-                                if (value > 999) {
-                                    value = 999;
+                                let value = e.target.value;
+                                if (!isNaN(value) && value !== '') {
+                                    value = parseInt(value, 10);
+                                    if (value > 999) {
+                                        value = 999;
+                                    }
+                                    if (value >= 0 && value <= 999) {
+                                        e.target.value = value;
+                                    }
                                 }
-                                if (value >= 0 && value <= 999) {
-                                    e.target.value = value;
-                                    handleInputChange(e, !showAddForm);
-                                }
+                                handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
                         />
@@ -342,14 +345,17 @@ const AdminMovies = () => {
                             name="rentalDuration"
                             value={showAddForm ? newMovie.rentalDuration : editMovie.rentalDuration}
                             onChange={(e) => {
-                                let value = parseInt(e.target.value, 10);
-                                if (value > 365) {
-                                    value = 365;
+                                let value = e.target.value;
+                                if (!isNaN(value) && value !== '') {
+                                    value = parseInt(value, 10);
+                                    if (value > 365) {
+                                        value = 365;
+                                    }
+                                    if (value >= 0 && value <= 365) {
+                                        e.target.value = value;
+                                    }
                                 }
-                                if (value >= 0 && value <= 365) {
-                                    e.target.value = value;
-                                    handleInputChange(e, !showAddForm);
-                                }
+                                handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
                         />
@@ -365,14 +371,17 @@ const AdminMovies = () => {
                             name="releaseYear"
                             value={showAddForm ? newMovie.releaseYear : editMovie.releaseYear}
                             onChange={(e) => {
-                                let value = parseInt(e.target.value, 10);
-                                if (value > 2100) {
-                                    value = 2100;
+                                let value = e.target.value;
+                                if (!isNaN(value) && value !== '') {
+                                    value = parseInt(value, 10);
+                                    if (value > 2100) {
+                                        value = 2100;
+                                    }
+                                    if (value >= 0 && value <= 2100) {
+                                        e.target.value = value;
+                                    }
                                 }
-                                if (value >= 0 && value <= 2100) {
-                                    e.target.value = value;
-                                    handleInputChange(e, !showAddForm);
-                                }
+                                handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
                         />
@@ -400,14 +409,17 @@ const AdminMovies = () => {
                             name="replacementCost"
                             value={showAddForm ? newMovie.replacementCost : editMovie.replacementCost}
                             onChange={(e) => {
-                                let value = parseInt(e.target.value, 10);
-                                if (value > 999) {
-                                    value = 999;
+                                let value = e.target.value;
+                                if (!isNaN(value) && value !== '') {
+                                    value = parseInt(value, 10);
+                                    if (value > 999) {
+                                        value = 999;
+                                    }
+                                    if (value >= 0 && value <= 999) {
+                                        e.target.value = value;
+                                    }
                                 }
-                                if (value >= 0 && value <= 999) {
-                                    e.target.value = value;
-                                    handleInputChange(e, !showAddForm);
-                                }
+                                handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
                         />
@@ -421,14 +433,17 @@ const AdminMovies = () => {
                             name="rentalRate"
                             value={showAddForm ? newMovie.rentalRate : editMovie.rentalRate}
                             onChange={(e) => {
-                                let value = parseInt(e.target.value, 10);
-                                if (value > 999) {
-                                    value = 999;
+                                let value = e.target.value;
+                                if (!isNaN(value) && value !== '') {
+                                    value = parseInt(value, 10);
+                                    if (value > 999) {
+                                        value = 999;
+                                    }
+                                    if (value >= 0 && value <= 999) {
+                                        e.target.value = value;
+                                    }
                                 }
-                                if (value >= 0 && value <= 999) {
-                                    e.target.value = value;
-                                    handleInputChange(e, !showAddForm);
-                                }
+                                handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
                         />

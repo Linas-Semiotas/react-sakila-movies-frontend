@@ -31,21 +31,8 @@ export const fetchMovies = async () => {
     return response.data;
 };
 
-// export const addMovie = async (movieData) => {
-//     try {
-//         const response = await axiosInstance.post('/movies', movieData);
-//         return response.data;
-//     } catch (error) {
-//         if (error.response && error.response.data) {
-//             throw new Error(error.response.data);
-//         } else {
-//             throw new Error("An unexpected error occurred");
-//         }
-//     }
-// };
-
 export const addMovie = async (movieData) => {
-    const response = await axiosInstance.put(`/movies`, movieData);
+    const response = await axiosInstance.post(`/movies`, movieData);
     return response.data;
 };
 
