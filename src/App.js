@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
 import './styles/App.css';
 import logo from './assets/images/sakila-logo.png';
@@ -16,26 +16,61 @@ import Notes from './components/Notes';
 import Unauthorized from './pages/other/Unauthorized';
 import NotFound from './pages/other/NotFound';
 import PrivateRoute from './components/PrivateRoute';
-import { getToken, logout } from './services/authService';
-
+import { getToken, getUserRoles, getUsername, logout } from './services/authService';
+import { jwtDecode } from 'jwt-decode';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('');
+    const [userRoles, setUserRoles] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
+
+    const handleLogout = useCallback(() => {
+        logout();
+        setIsLoggedIn(false);
+        setUserRoles([]);
+        navigate('/login');
+    },[navigate]);
 
     useEffect(() => {
         const token = getToken();
-        setIsLoggedIn(!!token);
-    }, []);
+        if (token) {
+            setIsLoggedIn(true);
+            setUserRoles(getUserRoles());
+            setUsername(getUsername());
 
-    const handleLogout = () => {
-        logout();
-        setIsLoggedIn(false);
-        navigate('/login');
-    };
+            const decodedToken = jwtDecode(token);
+            const expirationTime = decodedToken.exp * 1000;
+
+            const timeout = expirationTime - Date.now();
+            if (timeout > 0) {
+                setTimeout(() => {
+                    handleLogout();
+                }, timeout);
+            } else {
+                handleLogout();
+            }
+        } else {
+            setIsLoggedIn(false);
+            setUserRoles([]);
+            setUsername('');
+        }
+    }, [handleLogout]);
+
+    useEffect(() => {
+        setShowDropdown(false);
+    }, [isLoggedIn]);
 
     const handleLoginSuccess = () => {
         setIsLoggedIn(true);
+        setUserRoles(getUserRoles());
+    };
+
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
     };
 
     return (
@@ -51,10 +86,28 @@ const App = () => {
                 </nav>
                 <div className="header-space-150 header-space-150-end">
                     {isLoggedIn ? (
-                        <div className="nav-end-buttons">
-                            <Link className="nav-end-button" to="/user">Profile</Link>
-                            <div onClick={handleLogout} className="nav-end-button color-red color-red-200-hover">Logout</div>
-                        </div>                        
+                        <div className="profile-dropdown">
+                            <div className="profile-button" onClick={toggleDropdown}>
+                                {username || "Profile"}&nbsp;&nbsp;
+                                <FontAwesomeIcon style={{fontSize: "10px"}} icon={faChevronDown} />
+                            </div>
+                            {showDropdown && (
+                                <div className="dropdown-menu">
+                                    {userRoles.includes('ROLE_USER') && (
+                                        <>
+                                            <Link onClick={toggleDropdown} to="/user/orders" className="dropdown-item">Orders</Link>
+                                            <Link onClick={toggleDropdown} to="/user/balance" className="dropdown-item">Balance</Link>
+                                            <Link onClick={toggleDropdown} to="/user/profile" className="dropdown-item">Profile</Link>
+                                            <Link onClick={toggleDropdown} to="/user/security" className="dropdown-item">Security</Link>
+                                        </>
+                                    )}
+                                    {userRoles.includes('ROLE_ADMIN') && (
+                                        <Link onClick={toggleDropdown} to="/admin" className="dropdown-item">Admin</Link>
+                                    )}
+                                    <div onClick={handleLogout} className="dropdown-item logout-button">Logout</div>
+                                </div>
+                            )}
+                        </div>                       
                     ) : (
                         <Link to="/login" className="nav-end-button">Sign in</Link>
                     )}

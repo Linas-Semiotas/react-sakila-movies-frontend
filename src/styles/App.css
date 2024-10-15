@@ -98,15 +98,15 @@ input[type="number"] {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  padding-inline: 20px;
 }
 
 .header-space-150-start{
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .header-space-150-end{
   justify-content: flex-end;
-  gap: 1rem;
 }
 
 .nav-end-buttons{
@@ -147,6 +147,55 @@ input[type="number"] {
 
 .nav a:hover {
   color: #aaaaaa;
+}
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-button {
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 53px;
+  right: -20px;
+  background-color: #333;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  border: 1px solid #555;
+}
+
+.dropdown-item {
+  padding: 10px;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid #555;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background-color: #555;
+}
+
+.logout-button {
+  color: red;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
 }
 
 /* MAIN CONTENT */

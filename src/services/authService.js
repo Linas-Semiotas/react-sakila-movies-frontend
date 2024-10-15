@@ -7,14 +7,44 @@ axios.interceptors.response.use(
     response => response,
     error => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token'); // Clear the token
+            localStorage.removeItem('token');
         }
         return Promise.reject(error);
     }
 );
 
 export const getToken = () => {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+
+        if (decoded.exp < currentTime) {
+            logout();
+            return null;
+        }
+
+        return token;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        logout();
+        return null;
+    }
+};
+
+export const getUsername = () => {
+    const token = getToken();
+    if (!token) return null;
+
+    try {
+        const decoded = jwtDecode(token);
+        return decoded.sub || '';
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return '';
+    }
 };
 
 export const getUserRoles = () => {
