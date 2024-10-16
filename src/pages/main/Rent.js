@@ -15,23 +15,29 @@ const Rent = () => {
     useEffect(() => {
         getRentalById(id)
             .then(data => setRental(data))
-            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching rental'));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching rental data'));
     }, [id]);
 
-    const handleRentMovie = async () => {
+    const handleRentMovie = () => {
         if (rental.balance < rental.rentalRate) {
-            setError('Insufficient balance to rent this movie. Please top up your account.');
+            Utils.handleResponse('', setError, 'Insufficient balance to rent this movie. Please top up your account.');
             setSuccess('');
             return;
         }
-        try {
-            const response = await rentMovie(rental.id);
-            Utils.handleResponse(response.data, setSuccess, 'You successfully rented a movie.')
-            setError('');
-        } catch (err) {
-            Utils.handleResponse(err, setError, 'An error occurred during renting');
-            setSuccess('');
-        }
+    
+        rentMovie(rental.id)
+            .then(response => {
+                Utils.handleResponse(response, setSuccess, 'You successfully rented this movie.');
+                setError('');
+                return getRentalById(rental.id);
+            })
+            .then(updatedRental => {
+                setRental(updatedRental);
+            })
+            .catch(err => {
+                Utils.handleResponse(err, setError, 'An error occurred during renting');
+                setSuccess('');
+            });
     };
 
     const handleRentClick = () => {
@@ -49,14 +55,14 @@ const Rent = () => {
 
     return (
         <div className="rent-container">
-            {rental.title ? (
+            {rental && rental.title ? (
                 <div className="rental-card">
                     <h2>{rental.title}</h2>
-                    <p><strong>Rental Rate: </strong>{rental.rentalRate} $</p>
+                    <p><strong>Rental Rate: </strong>{rental.rentalRate}$</p>
                     <p><strong>Rental Duration: </strong>{rental.rentalDuration} days</p>
-                    <p><strong>Replacement Cost: </strong>{rental.replacementCost} $</p>
+                    <p><strong>Replacement Cost: </strong>{rental.replacementCost}$</p>
                     <div className="balance-info">
-                        Your Balance: {rental.balance} $
+                        Your Balance: {rental.balance}$
                     </div>
                     <button 
                         className={`rent-button ${rental.balance < rental.rentalRate ? 'disabled' : ''}`} 

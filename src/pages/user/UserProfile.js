@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getPersonalInfo, updatePersonalInfo, getAddressInfo, updateAddressInfo } from '../../services/userService';
+import Utils from '../../components/Utility';
 
 const UserProfile = () => {
-    const [personalInfoError, setPersonalInfoError] = useState(null);
-    const [addressError, setAddressError] = useState(null);
-    const [personalInfoSuccess, setPersonalInfoSuccess] = useState(null);
-    const [addressSuccess, setAddressSuccess] = useState(null);
+    const [personalError, setPersonalError] = useState('');
+    const [addressError, setAddressError] = useState('');
+    const [personalSuccess, setPersonalSuccess] = useState('');
+    const [addressSuccess, setAddressSuccess] = useState('');
 
     const [personalInfo, setPersonalInfo] = useState({
         firstName: '',
@@ -22,27 +23,13 @@ const UserProfile = () => {
     });
 
     useEffect(() => {
-
         getPersonalInfo()
-            .then(response => {
-                setPersonalInfo(response);
-                setPersonalInfoError(null);
-            })
-            .catch(error => {
-                console.error("Error fetching personal information:", error);
-                setPersonalInfoError("There was an error loading your personal information. Please try again.");
-            });
-
+            .then(response => setPersonalInfo(response))
+            .catch(err => Utils.handleResponse(err, setPersonalError, 'There was an error loading your personal information.'));
+    
         getAddressInfo()
-        .then(response => {
-            setAddressInfo(response);
-            setAddressError(null);
-        })
-        .catch(error => {
-            console.error("Error fetching address information:", error);
-            setAddressError("There was an error loading your address information. Please try again.");
-        });
-
+            .then(response => setAddressInfo(response))
+            .catch(err => Utils.handleResponse(err, setAddressError, 'There was an error loading your address information.'));
     }, []);
 
     const handlePersonalInfoChange = (e) => {
@@ -59,25 +46,25 @@ const UserProfile = () => {
         e.preventDefault();
         updatePersonalInfo(personalInfo)
             .then(response => {
-                setPersonalInfoSuccess('Personal information updated successfully');
-                setPersonalInfoError(null); // Reset error after a successful update
+                Utils.handleResponse(response, setPersonalSuccess, 'Personal information updated successfully');
+                setPersonalError('');
             })
-            .catch(error => {
-                setPersonalInfoError("There was an error updating your personal information. Please try again.");
-                setPersonalInfoSuccess(null); // Reset success if there's an error
+            .catch(err => {
+                Utils.handleResponse(err, setPersonalError, 'There was an error updating your personal information.');
+                setPersonalSuccess('');
             });
     };
 
     const handleAddressInfoSubmit = (e) => {
         e.preventDefault();
         updateAddressInfo(addressInfo)
-            .then(() => {
-                setAddressSuccess('Address information updated successfully');
-                setAddressError(null);
+            .then(response => {
+                Utils.handleResponse(response, setAddressSuccess, 'Address information updated successfully');
+                setAddressError('');
             })
-            .catch(error => {
-                setAddressError("There was an error updating your address information. Please try again.");
-                setAddressSuccess(null);
+            .catch(err => {
+                Utils.handleResponse(err, setAddressError, 'There was an error updating your address information.');
+                setAddressSuccess('');
             });
     };
 
@@ -146,8 +133,8 @@ const UserProfile = () => {
                     </div>
                     <button className="submit-button" type="submit">Save Changes</button>
                 </form>
-                {personalInfoError && <p className="error-message">{personalInfoError}</p>}
-                {personalInfoSuccess && <p className="success-message">{personalInfoSuccess}</p>}
+                {personalError && <p className="error-message">{personalError}</p>}
+                {personalSuccess && <p className="success-message">{personalSuccess}</p>}
             </div>
             
             <div className="user-container">

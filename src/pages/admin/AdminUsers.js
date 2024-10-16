@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUsers, updateUser } from '../../services/adminService';
+import Utils from '../../components/Utility';
 import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminUsers = () => {
@@ -8,34 +9,24 @@ const AdminUsers = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [filter, setFilter] = useState({ user: 0, admin: 0, enabled: 0 });
     const [search, setSearch] = useState('');
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [showModal, setShowModal] = useState(false);
 
-    // Fetch users when the component mounts
     useEffect(() => {
-        fetchAllUsers();
-    }, []);
-
-    const fetchAllUsers = async () => {
-        try {
-            const data = await fetchUsers();
-            setUsers(data);
-            setFilteredUsers(data);
-            if (data.length > 0) {
-                setSelectedUser(data[0]);
-            } else {
-                setSelectedUser({
+        fetchUsers()
+            .then(data => {
+                setUsers(data);
+                setFilteredUsers(data);
+                setSelectedUser(data.length > 0 ? data[0] : { 
                     username: 'Username',
                     userRole: false,
                     adminRole: false,
-                    enabled: false,
+                    enabled: false 
                 });
-            }
-        } catch (error) {
-            setError('Error fetching users. Please try again.');
-        }
-    };
+            })
+            .catch(err => Utils.handleResponse(err, setError, 'Error fetching users. Please try again.'));
+    }, []);
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
@@ -75,8 +66,7 @@ const AdminUsers = () => {
 
     const handleUserSelect = (user) => {
         setSelectedUser(user);
-        setError(null);
-        setSuccess(null);
+        Utils.resetResponse(setError, setSuccess);
     };
 
     const handleCheckboxChange = (e) => {
@@ -86,13 +76,17 @@ const AdminUsers = () => {
 
     const saveChanges = async () => {
         if (!selectedUser) return;
-        try {
-            await updateUser(selectedUser.userId, selectedUser);
+        updateUser(selectedUser.userId, selectedUser)
+            
+        .then(() => {
             setSuccess('User updated successfully.');
-            fetchAllUsers(); // Refresh the list
-        } catch (error) {
-            setError('Error saving changes. Please try again.');
-        }
+            fetchUsers()
+                .then(data => {
+                    setUsers(data);
+                    setFilteredUsers(data);
+                })
+        })
+        .catch(err => Utils.handleResponse(err, setError, 'Error saving changes. Please try again.'));
     };
 
     const handleSaveClick = () => {

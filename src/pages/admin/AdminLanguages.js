@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, addLanguage, deleteLanguage } from '../../services/adminService';
+import Utils from '../../components/Utility';
 import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminLanguages = () => {
@@ -13,39 +14,35 @@ const AdminLanguages = () => {
     useEffect(() => {
         fetchLanguages()
             .then(setLanguages)
-            .catch(() => setError("Error fetching languages."));
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching languages."));
     }, []);
 
     const handleAddLanguage = () => {
-        setError(null);
-        setSuccess(null);
-
+        Utils.resetResponse(setError, setSuccess);
+    
         if (!newLanguage.trim()) {
-            setError("Language name cannot be empty.");
-            return;
+            return Utils.handleResponse(null, setError, "Language name cannot be empty.");
         }
-        
+    
         addLanguage(newLanguage)
-            .then(() => {
-                setSuccess("Language added successfully.");
-                setNewLanguage('');
+            .then(response => {
+                Utils.handleResponse(response, setSuccess, "Language added successfully.");
+                Utils.resetResponse(setNewLanguage);
                 fetchLanguages().then(setLanguages);
             })
-            .catch(err => setError(err.response?.data?.error || "Error adding language."));
+            .catch(err => Utils.handleResponse(err, setError, "Error adding language."));
     };
 
-    const handleDeleteLanguage = async (languageId) => {
-        setError(null);
-        setSuccess(null);
-        try {
-            await deleteLanguage(languageId);
-            setSuccess('Language deleted successfully.');
-            setError(null);
-            fetchLanguages().then(setLanguages);
-        } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Error deleting language. It might be in use.';
-            setError(errorMessage);
-        }
+    const handleDeleteLanguage = (languageId) => {
+        Utils.resetResponse(setError, setSuccess);
+    
+        deleteLanguage(languageId)
+            .then(response => {
+                Utils.handleResponse(response, setSuccess, 'Language deleted successfully.');
+                Utils.resetResponse(setError);
+                fetchLanguages().then(setLanguages);
+            })
+            .catch(err => Utils.handleResponse(err, setError, 'Error deleting language. It might be in use.'));
     };
 
     const handleDeleteClick = (id) => {

@@ -23,22 +23,19 @@ const Register = () => {
         setShowPassword(!showPassword);
     };
 
-    const handleRegistration = async (e) => {
+    const handleRegistration = (e) => {
         e.preventDefault();
         setError('');
-                
-        try {
-            await register(username, password, firstName, lastName, email, selectedStore);
-            navigate('/home');
-        } catch (err) {
-            Utils.handleResponse(err, setError, 'An error occurred during registration');
-        }
+    
+        register(username, password, firstName, lastName, email, selectedStore)
+            .then(() => navigate('/register-success'))
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred during registration'));
     };
 
     useEffect(() => {
         getAllStores()
             .then(data => setStores(data))
-            .catch(err => setError(err));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while getting stores'));
     }, []);
 
     return (

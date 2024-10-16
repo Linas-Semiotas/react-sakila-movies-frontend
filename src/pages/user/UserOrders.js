@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/User.css';
 import { getOrders } from '../../services/userService';
+import Utils from '../../components/Utility';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TablePagination, Paper
@@ -16,7 +17,7 @@ const UserOrders = () => {
     useEffect(() => {
         getOrders()
             .then(data => setOrders(data))
-            .catch(err => setError(err));
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred while fetching orders'));
     }, []);
 
     const handleChangePage = (event, newPage) => {

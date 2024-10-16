@@ -5,7 +5,7 @@ import Utils from '../../components/Utility';
 
 const Stores = () => {
     const [stores, setStores] = useState([]);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         getAllStores()

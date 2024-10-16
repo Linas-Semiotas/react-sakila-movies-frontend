@@ -26,19 +26,19 @@ const createAxiosInstance = (endpoint) => {
         (response) => response,
         (error) => {
             const { response } = error;
+
             if (response) {
-                if (response.status === 401) {
-                    console.error(`Error ${response.status}: ${response.data.message || 'Unauthorized access. Please log in.'}`);
-                } else if (response.status === 403) {
-                    console.error(`Error ${response.status}: ${response.data.message || 'Forbidden: Access is denied.'}`);
-                } else if (response.status === 500) {
-                    console.error(`Error ${response.status}: ${response.data.message || 'Internal server error. Please try again later.'}`);
-                } else {
-                    console.error(`Error ${response.status}: ${response.data.message || 'An unknown error occurred.'}`);
-                }
+                error.customError = {
+                    code: response.status,
+                    message: response.data.message || 'An error occurred.'
+                };
             } else {
-                console.error('Network error: Please check your connection or try again later.');
+                error.customError = {
+                    code: 'Network Error',
+                    message: 'Please check your connection or try again later.'
+                };
             }
+
             return Promise.reject(error);
         }
     );

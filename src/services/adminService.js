@@ -4,24 +4,13 @@ const axiosInstance = createAxiosInstance('/api/admin');
 
 // USERS
 export const fetchUsers = async () => {
-    try {
-        const response = await axiosInstance.get('/users');
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        throw error;
-    }
+    const response = await axiosInstance.get('/users');
+    return response.data;
 };
 
-
 export const updateUser = async (userId, updatedUserData) => {
-    try {
-        const response = await axiosInstance.put(`/users/${userId}`, updatedUserData);
-        return response.data;
-    } catch (error) {
-        console.error("Error updating user:", error);
-        throw error;
-    }
+    const response = await axiosInstance.put(`/users/${userId}`, updatedUserData);
+    return response.data;
 };
 
 //MOVIES

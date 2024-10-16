@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, fetchMovies, fetchCategories, fetchActors, addMovie, updateMovie, deleteMovie } from '../../services/adminService';
+import Utils from '../../components/Utility';
 import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminMovies = () => {
@@ -40,8 +41,8 @@ const AdminMovies = () => {
     const [showUpdateForm, setShowUpdateForm] = useState(false);
     const [search, setSearch] = useState('');
     const [filteredMovies, setFilteredMovies] = useState([]);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
@@ -53,19 +54,16 @@ const AdminMovies = () => {
                 setMovies(data);
                 setFilteredMovies(data);
             })
-            .catch(() => setError("Error fetching movies."));
-
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching movies."));
         fetchLanguages()
             .then(setLanguages)
-            .catch(() => setError("Error fetching languages."));
-
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching languages."));
         fetchCategories()
             .then(setCategory)
-            .catch(() => setError("Error fetching categories."));
-
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching categories."));
         fetchActors()
             .then(setActors)
-            .catch(() => setError("Error fetching actors."));
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching actors."));
     }, []);
 
     const handleSearchChange = (e) => {
@@ -151,63 +149,56 @@ const AdminMovies = () => {
     };
 
     const handleAddMovie = () => {
-        setError(null);
-        setSuccess(null);
-
+        Utils.resetResponse(setError, setSuccess);
         if (Object.values(newMovie).some(value => value === '' || value.length === 0)) {
-            setError("All fields are required.");
+            Utils.handleResponse(null, setError, 'All fields are required.');
             return;
         }
-
         addMovie(newMovie)
-            .then((message) => {
-                setSuccess(message);
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, 'Movie added successfully.');
                 fetchMovies().then((data) => {
                     setMovies(data);
                     setFilteredMovies(data);
                 });
                 setShowAddForm(false);
             })
-            .catch(err => {
-                setError(err.message);
-            });
+            .catch(err => Utils.handleResponse(err, setError, 'Error adding movie.'));
+            
     };
 
     const handleUpdateMovie = () => {
-        setError(null);
-        setSuccess(null);
-
+        Utils.resetResponse(setError, setSuccess);
         if (Object.values(editMovie).some(value => value === '' || value.length === 0)) {
-            setError("All fields are required for updating.");
+            Utils.handleResponse(null, setError, 'All fields are required for updating.');
             return;
         }
-
         updateMovie(editMovie)
-            .then(() => {
-                setSuccess("Movie updated successfully.");
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, 'Movie updated successfully.');
                 fetchMovies().then((data) => {
                     setMovies(data);
                     setFilteredMovies(data);
                 });
                 setShowUpdateForm(false);
             })
-            .catch(err => setError(err.response?.data?.error || "Error updating movie."));
+            .catch(err => Utils.handleResponse(err, setError, 'Error updating movie.'));
     };
 
     const handleDeleteMovie = async (movieId) => {
-        setError(null);
-        setSuccess(null);
-        try {
-            await deleteMovie(movieId);
-            setSuccess('Movie deleted successfully.');
-            fetchMovies().then((data) => {
-                setMovies(data);
-                setFilteredMovies(data);
+        Utils.resetResponse(setError, setSuccess);
+        deleteMovie(movieId)
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, 'Movie deleted successfully.');
+                fetchMovies()
+                    .then((data) => {
+                        setMovies(data);
+                        setFilteredMovies(data);
+                });
+            })
+            .catch(err => {
+                Utils.handleResponse(err, setError, 'Error deleting movie. It might be in use.');
             });
-        } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Error deleting movie. It might be in use.';
-            setError(errorMessage);
-        }
     };
 
     const handleDeleteClick = (id) => {

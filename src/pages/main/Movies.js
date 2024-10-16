@@ -11,7 +11,7 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons';
 const Movies = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [movies, setMovies] = useState([]);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchCategories, addCategory, deleteCategory } from '../../services/adminService';
+import Utils from '../../components/Utility';
 import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminCategories = () => {
@@ -13,39 +14,35 @@ const AdminCategories = () => {
     useEffect(() => {
         fetchCategories()
             .then(setCategories)
-            .catch(() => setError("Error fetching categories."));
+            .catch(err => Utils.handleResponse(err, setError, "Error fetching categories."));
     }, []);
 
     const handleAddCategory = () => {
-        setError(null);
-        setSuccess(null);
+        Utils.resetResponse(setError, setSuccess);
         
         if (!newCategory.trim()) {
-            setError("Category name cannot be empty.");
-            return;
+            return Utils.handleResponse(null, setError, "Category name cannot be empty.");
         }
         
         addCategory(newCategory)
-            .then(() => {
-                setSuccess("Category added successfully.");
-                setNewCategory('');
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, "Category added successfully.");
+                Utils.resetResponse(setNewCategory);
                 fetchCategories().then(setCategories);
             })
-            .catch(err => setError(err.response?.data?.error || "Error adding category."));
+            .catch(err => Utils.handleResponse(err, setError, "Error adding category."));
     };
 
-    const handleDeleteCategory = async (categoryId) => {
-        setError(null);
-        setSuccess(null);
-        try {
-            await deleteCategory(categoryId);
-            setSuccess('Category deleted successfully.');
-            setError(null);
-            fetchCategories().then(setCategories);
-        } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Error deleting category. It might be in use.';
-            setError(errorMessage);
-        }
+    const handleDeleteCategory = (categoryId) => {
+        Utils.resetResponse(setError, setSuccess);
+
+        deleteCategory(categoryId)
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, "Category deleted successfully.");
+                Utils.resetResponse(setError);
+                fetchCategories().then(setCategories);
+            })
+            .catch(err => Utils.handleResponse(err, setError, "Error deleting category. It might be in use."));
     };
 
     const handleDeleteClick = (id) => {

@@ -13,9 +13,10 @@ import Register from './pages/auth/Register';
 import User from './pages/user/User';
 import Admin from './pages/admin/Admin';
 import Notes from './components/Notes';
-import Unauthorized from './pages/other/Unauthorized';
-import NotFound from './pages/other/NotFound';
+import ErrorPage from './pages/other/ErrorPage';
+import RegisterSuccess from './pages/other/RegisterSuccess';
 import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
 import { getToken, getUserRoles, getUsername, logout } from './services/authService';
 import { jwtDecode } from 'jwt-decode';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -136,13 +137,14 @@ const App = () => {
                     <Route path="/rental" element={<PrivateRoute><Rental /></PrivateRoute>} />
                     <Route path="/rental/:id" element={<PrivateRoute><Rent /></PrivateRoute>} />
                     <Route path="/stores" element={<Stores />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                    <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+                    <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
                     <Route path="/user/*" element={<PrivateRoute requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
                     <Route path="/admin/*" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
                     <Route path="/TODO" element={<Notes />} />
-                    <Route path="/unauthorized" element={<Unauthorized />} />
-                    <Route path="*" element={<NotFound />} />
+                    <Route path="/register-success" element={<RegisterSuccess />} />
+                    <Route path="/error" element={<ErrorPage />} />
+                    <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </div>
 

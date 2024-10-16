@@ -17,17 +17,16 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
-    const handleLogin = async (e) => {
+    const handleLogin = (e) => {
         e.preventDefault();
         setError('');
-                
-        try {
-            const data = await login(username, password);
-            localStorage.setItem('token', data.token);
-            navigate('/home');
-        } catch (err) {
-            Utils.handleResponse(err, setError, 'An error occurred during login');
-        }
+    
+        login(username, password)
+            .then(data => {
+                localStorage.setItem('token', data.token);
+                navigate('/home');
+            })
+            .catch(err => Utils.handleResponse(err, setError, 'An error occurred during login'));
     };
 
     return (

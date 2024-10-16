@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 
 const Rental = () => {
     const [rental, setRental] = useState([]);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [order, setOrder] = useState('asc');
@@ -124,8 +124,8 @@ const Rental = () => {
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <TableCell>{row.title}</TableCell>
-                                        <TableCell>{row.rentalRate} $</TableCell>
-                                        <TableCell>{row.replacementCost} $</TableCell>
+                                        <TableCell>{row.rentalRate}$</TableCell>
+                                        <TableCell>{row.replacementCost}$</TableCell>
                                         <TableCell>{row.rentalDuration} Days</TableCell>
                                     </TableRow>
                                 ))}

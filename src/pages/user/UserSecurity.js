@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { changePassword } from '../../services/userService';
+import Utils from '../../components/Utility';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,7 +12,7 @@ const UserSecurity = () => {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [success, setSuccess] = useState('');
 
     const toggleCurrentPasswordVisibility = () => {
         setShowCurrentPassword(!showCurrentPassword);
@@ -25,29 +26,24 @@ const UserSecurity = () => {
         setShowRepeatPassword(!showRepeatPassword);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
-        setSuccessMessage('');
-
+        setSuccess('');
+    
         if (newPassword !== newRepeatPassword) {
-            setError("New passwords do not match");
+            Utils.handleResponse('', setError, "New passwords do not match");
             return;
         }
-
-        try {
-            await changePassword(currentPassword, newPassword);
-            setSuccessMessage("Password updated successfully");
-            setCurrentPassword('');
-            setNewPassword('');
-            setRepeatNewPassword('');
-        } catch (err) {
-            if (err.response && err.response.data) {
-                setError(err.response.data.message || "Error changing password");
-            } else {
-                setError("Error changing password");
-            }
-        }
+    
+        changePassword(currentPassword, newPassword)
+            .then((data) => {
+                Utils.handleResponse(data, setSuccess, "Password changed successfully");
+                setCurrentPassword('');
+                setNewPassword('');
+                setRepeatNewPassword('');
+            })
+            .catch(err => Utils.handleResponse(err, setError, "Error changing password"));
     };
 
     return (
@@ -110,7 +106,7 @@ const UserSecurity = () => {
                 </div>
                 <button className="submit-button" type="submit">Update Password</button>
                 {error && <p className="error-message">{error}</p>}
-                {successMessage && <p className="success-message">{successMessage}</p>}
+                {success && <p className="success-message">{success}</p>}
             </form>
         </div>
     );

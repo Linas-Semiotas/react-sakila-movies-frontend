@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchActors, addActor, deleteActor } from '../../services/adminService';
+import Utils from '../../components/Utility';
 import { ConfirmationWindow } from '../../components/InfoWindows';
 
 const AdminActors = () => {
@@ -19,7 +20,7 @@ const AdminActors = () => {
                 setActors(data);
                 setFilteredActors(data);
             })
-            .catch(() => setError("Error fetching actors."));
+            .catch((err) => Utils.handleResponse(err, setError, 'Error fetching actors.'));
     }, []);
 
     const handleSearchChange = (e) => {
@@ -35,36 +36,37 @@ const AdminActors = () => {
     };
 
     const handleAddActor = () => {
-        setError(null);
-        setSuccess(null);
+        Utils.resetResponse(setError, setSuccess);
 
         if (!firstName.trim() || !lastName.trim()) {
-            setError("Both first and last name are required.");
+            Utils.handleResponse(null, setError, 'Both first and last name are required.');
             return;
         }
 
         addActor(firstName, lastName)
-            .then(() => {
-                setSuccess("Actor added successfully.");
-                setFirstName('');
-                setLastName('');
-                fetchActors().then(setActors);
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, 'Actor added successfully.');
+                Utils.resetResponse(setFirstName, setLastName);
+                fetchActors().then((data) => {
+                    setActors(data);
+                    setFilteredActors(data);
+                });
             })
-            .catch(err => setError(err.response?.data?.error || "Error adding actor."));
+            .catch(err => Utils.handleResponse(err, setError, 'Error adding actor.'));
     };
 
     const handleDeleteActor = async (actorId) => {
-        setError(null);
-        setSuccess(null);
-        try {
-            await deleteActor(actorId);
-            setSuccess('Actor deleted successfully.');
-            setError(null);
-            fetchActors().then(setActors);
-        } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Error deleting actor. It might be in use.';
-            setError(errorMessage);
-        }
+        Utils.resetResponse(setError, setSuccess);
+
+        deleteActor(actorId)
+            .then((response) => {
+                Utils.handleResponse(response, setSuccess, 'Actor deleted successfully.');
+                fetchActors().then((data) => {
+                    setActors(data);
+                    setFilteredActors(data);
+                });
+            })
+            .catch(err => Utils.handleResponse(err, setError, 'Error deleting actor. It might be in use.'));
     };
 
     const handleDeleteClick = (id) => {
