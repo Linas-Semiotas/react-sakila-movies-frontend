@@ -46,7 +46,7 @@ const AdminMovies = () => {
     const [showModal, setShowModal] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
 
-    const ratings = ['G', 'PG', 'PG_13', 'R', 'NC_17'];
+    const ratings = ['G', 'PG', 'PG13', 'R', 'NC17'];
 
     useEffect(() => {
         fetchMovies()
@@ -96,6 +96,7 @@ const AdminMovies = () => {
     };
 
     const handleAddButtonClick = () => {
+        Utils.resetResponse(setError, setSuccess);
         setShowAddForm(true);
         setShowUpdateForm(false);
         setNewMovie({
@@ -115,6 +116,7 @@ const AdminMovies = () => {
     };
 
     const handleRowClick = (movie) => {
+        Utils.resetResponse(setError, setSuccess);
         setEditMovie(movie);
         setShowUpdateForm(true);
         setShowAddForm(false);
@@ -180,7 +182,6 @@ const AdminMovies = () => {
                     setMovies(data);
                     setFilteredMovies(data);
                 });
-                setShowUpdateForm(false);
             })
             .catch(err => Utils.handleResponse(err, setError, 'Error updating movie.'));
     };
