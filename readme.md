@@ -55,7 +55,7 @@ The frontend for **Sakila Movies** is built using **React**, offering a user-fri
 ## Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Linas-Semiotas/react-sakila-movies-frontend.git
    ```
 2. Navigate to the project directory and install dependencies:
     ```bash
