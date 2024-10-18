@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { changePassword } from '../../services/userService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 

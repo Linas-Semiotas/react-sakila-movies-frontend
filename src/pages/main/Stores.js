@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/Stores.css';
 import { getAllStores } from '../../services/storeService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 
 const Stores = () => {
     const [stores, setStores] = useState([]);

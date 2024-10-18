@@ -1,9 +1,11 @@
 import axios from 'axios';
-import { getToken } from './authService';
+import { getToken } from '../services/authService';
+import BASE_URL from './config';
 
 const createAxiosInstance = (endpoint) => {
+    // Create an instance of axios with a custom configuration
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:8080' + endpoint,
+        baseURL: BASE_URL + endpoint,
         headers: {
             'Content-Type': 'application/json',
         }
@@ -42,7 +44,7 @@ const createAxiosInstance = (endpoint) => {
             return Promise.reject(error);
         }
     );
-
+    
     return axiosInstance;
 };
 

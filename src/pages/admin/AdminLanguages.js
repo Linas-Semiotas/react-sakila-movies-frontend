@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, addLanguage, deleteLanguage } from '../../services/adminService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const AdminLanguages = () => {
     const [languages, setLanguages] = useState([]);
     const [newLanguage, setNewLanguage] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         fetchLanguages()
@@ -45,19 +42,11 @@ const AdminLanguages = () => {
             .catch(err => Utils.handleResponse(err, setError, 'Error deleting language. It might be in use.'));
     };
 
-    const handleDeleteClick = (id) => {
-        setItemToDelete(id);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        handleDeleteLanguage(itemToDelete);
-        setShowModal(false);
-    };
-
-    const handleCancelDelete = () => {
-        setShowModal(false);
-    };
+    const { handleClickVar, ConfirmationModal } = Utils.useConfirmation(
+        handleDeleteLanguage,
+        "Confirmation",
+        "Are you sure you want to delete this language?"
+    );
 
     return (
         <div className="admin-container">
@@ -80,7 +69,7 @@ const AdminLanguages = () => {
                                     <tr key={lang.id}>
                                         <td style={{ width: '70%', textAlign: 'left' }}>{lang.name}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleDeleteClick(lang.id)}>Delete</button>
+                                            <button className="delete-button" onClick={() => handleClickVar(lang.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -104,13 +93,7 @@ const AdminLanguages = () => {
                     </div>
                 </div>
             </div>
-            <ConfirmationWindow
-                show={showModal}
-                name="Confirm delete"
-                message="Are you sure you want to delete this language?"
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-            />
+            <ConfirmationModal/>
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
         </div>

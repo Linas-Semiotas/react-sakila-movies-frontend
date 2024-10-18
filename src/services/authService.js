@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import BASE_URL from '../utils/config';
 
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = BASE_URL + '/api/auth';
 
 axios.interceptors.response.use(
     response => response,

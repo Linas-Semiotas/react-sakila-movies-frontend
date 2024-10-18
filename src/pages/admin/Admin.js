@@ -8,6 +8,7 @@ import Languages from './AdminLanguages';
 import Categories from './AdminCategories';
 import Actors from './AdminActors';
 
+//Page adds tabs navigation for admin dashboard pages
 const Admin = () => {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();

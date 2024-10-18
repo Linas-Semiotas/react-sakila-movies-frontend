@@ -1,84 +1,69 @@
-import createAxiosInstance from './axiosInstance';
+// services/adminService.js
+import apiRequest from '../utils/apiService';
 
-const axiosInstance = createAxiosInstance('/api/admin');
+const API_URL = '/api/admin';
 
 // USERS
 export const fetchUsers = async () => {
-    const response = await axiosInstance.get('/users');
-    return response.data;
+    return await apiRequest('get', '/users', null, API_URL);
 };
 
 export const updateUser = async (userId, updatedUserData) => {
-    const response = await axiosInstance.put(`/users/${userId}`, updatedUserData);
-    return response.data;
+    return await apiRequest('put', `/users/${userId}`, updatedUserData, API_URL);
 };
 
-//MOVIES
-
+// MOVIES
 export const fetchMovies = async () => {
-    const response = await axiosInstance.get('/movies');
-    return response.data;
+    return await apiRequest('get', '/movies', null, API_URL);
 };
 
 export const addMovie = async (movieData) => {
-    const response = await axiosInstance.post(`/movies`, movieData);
-    return response.data;
+    return await apiRequest('post', '/movies', movieData, API_URL);
 };
 
 export const updateMovie = async (movieData) => {
-    const response = await axiosInstance.put(`/movies/${movieData.id}`, movieData);
-    return response.data;
+    return await apiRequest('put', `/movies/${movieData.id}`, movieData, API_URL);
 };
 
 export const deleteMovie = async (id) => {
-    const response = await axiosInstance.delete(`/movies/${id}`);
-    return response.data;
+    return await apiRequest('delete', `/movies/${id}`, null, API_URL);
 };
 
-//LANGUAGES
+// LANGUAGES
 export const fetchLanguages = async () => {
-    const response = await axiosInstance.get('/languages');
-    return response.data;
+    return await apiRequest('get', '/languages', null, API_URL);
 };
 
 export const addLanguage = async (name) => {
-    const response = await axiosInstance.post('/languages', { name });
-    return response.data;
+    return await apiRequest('post', '/languages', { name }, API_URL);
 };
 
 export const deleteLanguage = async (id) => {
-    const response = await axiosInstance.delete(`/languages/${id}`);
-    return response.data;
+    return await apiRequest('delete', `/languages/${id}`, null, API_URL);
 };
 
-//CATEGORIES
+// CATEGORIES
 export const fetchCategories = async () => {
-    const response = await axiosInstance.get('/categories');
-    return response.data;
+    return await apiRequest('get', '/categories', null, API_URL);
 };
 
 export const addCategory = async (name) => {
-    const response = await axiosInstance.post('/categories', { name });
-    return response.data;
+    return await apiRequest('post', '/categories', { name }, API_URL);
 };
 
 export const deleteCategory = async (id) => {
-    const response = await axiosInstance.delete(`/categories/${id}`);
-    return response.data;
+    return await apiRequest('delete', `/categories/${id}`, null, API_URL);
 };
 
 // ACTORS
 export const fetchActors = async () => {
-    const response = await axiosInstance.get('/actors');
-    return response.data;
+    return await apiRequest('get', '/actors', null, API_URL);
 };
 
 export const addActor = async (firstName, lastName) => {
-    const response = await axiosInstance.post('/actors', { firstName, lastName });
-    return response.data;
+    return await apiRequest('post', '/actors', { firstName, lastName }, API_URL);
 };
 
 export const deleteActor = async (id) => {
-    const response = await axiosInstance.delete(`/actors/${id}`);
-    return response.data;
+    return await apiRequest('delete', `/actors/${id}`, null, API_URL);
 };

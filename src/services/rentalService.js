@@ -1,18 +1,15 @@
-import createAxiosInstance from './axiosInstance';
+import apiRequest from '../utils/apiService';
 
-const axiosInstance = createAxiosInstance('/api/rental');
+const API_URL = "/api/rental";
 
 export const getAllRentals = async () => {
-    const response = await axiosInstance.get('');
-    return response.data;
+    return await apiRequest('get', '', null, API_URL);
 };
 
 export const getRentalById = async (id) => {
-    const response = await axiosInstance.get(`/${id}`);
-    return response.data;
+    return await apiRequest('get', `/${id}`, {id}, API_URL);
 };
 
 export const rentMovie = async (id) => {
-    const response = await axiosInstance.post(`/rent`, { id });
-    return response;
+    return await apiRequest('post', `/rent`, {id}, API_URL);
 };

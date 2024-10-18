@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Rental.css';
 import { getAllRentals } from '../../services/rentalService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
 
 const Rental = () => {

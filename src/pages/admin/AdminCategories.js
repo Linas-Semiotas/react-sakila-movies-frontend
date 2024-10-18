@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { fetchCategories, addCategory, deleteCategory } from '../../services/adminService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         fetchCategories()
@@ -45,19 +42,11 @@ const AdminCategories = () => {
             .catch(err => Utils.handleResponse(err, setError, "Error deleting category. It might be in use."));
     };
 
-    const handleDeleteClick = (id) => {
-        setItemToDelete(id);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        handleDeleteCategory(itemToDelete);
-        setShowModal(false);
-    };
-
-    const handleCancelDelete = () => {
-        setShowModal(false);
-    };
+    const { handleClickVar, ConfirmationModal } = Utils.useConfirmation(
+        handleDeleteCategory,
+        "Confirmation",
+        "Are you sure you want to delete this category?"
+    );
 
     return (
         <div className="admin-container">
@@ -80,7 +69,7 @@ const AdminCategories = () => {
                                     <tr key={categ.id}>
                                         <td style={{ width: '70%', textAlign: 'left' }}>{categ.name}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleDeleteClick(categ.id)}>Delete</button>
+                                            <button className="delete-button" onClick={() => handleClickVar(categ.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -104,13 +93,7 @@ const AdminCategories = () => {
                     </div>
                 </div>
             </div>
-            <ConfirmationWindow
-                show={showModal}
-                name="Confirmation"
-                message="Are you sure you want to delete this category?"
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-            />
+            <ConfirmationModal />
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
         </div>

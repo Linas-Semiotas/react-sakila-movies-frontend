@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getBalance, addBalance } from '../../services/userService.js';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 
 const UserBalance = () => {
     const [balance, setBalance] = useState(0.0);

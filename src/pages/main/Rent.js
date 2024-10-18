@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../../styles/Rent.css';
 import { getRentalById, rentMovie  } from '../../services/rentalService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const Rent = () => {
     const { id } = useParams();
     const [rental, setRental] = useState({});
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         getRentalById(id)
@@ -40,18 +38,11 @@ const Rent = () => {
             });
     };
 
-    const handleRentClick = () => {
-        setShowModal(true);
-    };
-
-    const handleConfirmRent = () => {
-        handleRentMovie();
-        setShowModal(false);
-    };
-
-    const handleCancelRent = () => {
-        setShowModal(false);
-    };
+    const { handleClick, ConfirmationModal } = Utils.useConfirmation(
+        handleRentMovie,
+        "Confirmation",
+        "Are you sure you want to rent this movie?"
+    );
 
     return (
         <div className="rent-container">
@@ -66,18 +57,12 @@ const Rent = () => {
                     </div>
                     <button 
                         className={`rent-button ${rental.balance < rental.rentalRate ? 'disabled' : ''}`} 
-                        onClick={handleRentClick} 
+                        onClick={handleClick} 
                         disabled={rental.balance < rental.rentalRate}
                     >
                         {rental.balance >= rental.rentalRate ? "Rent Now" : "Insufficient Balance"}
                     </button>
-                    <ConfirmationWindow
-                        show={showModal}
-                        name="Confirmation"
-                        message="Are you sure you want to rent this movie?"
-                        onConfirm={handleConfirmRent}
-                        onCancel={handleCancelRent}
-                    />
+                    <ConfirmationModal />
                 </div>
             ) : null}
             {error && <p className="error-message">{error}</p>}

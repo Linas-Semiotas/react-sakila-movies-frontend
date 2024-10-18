@@ -1,8 +1,7 @@
-import createAxiosInstance from './axiosInstance';
+import apiRequest from '../utils/apiService';
 
-const axiosInstance = createAxiosInstance('/api/stores');
+const API_URL = "/api/stores";
 
 export const getAllStores = async () => {
-    const response = await axiosInstance.get('');
-    return response.data;
+    return await apiRequest('get', '', null, API_URL);
 };

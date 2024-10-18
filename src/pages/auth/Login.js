@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 import '../../styles/Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -33,44 +33,46 @@ const Login = () => {
         <div className="login-container">
             <div className='page-title'>Login</div>
             <div className="login-wrapper">
-                <div className="input-single">
-                    <input
-                        name='username'
-                        placeholder='Username'
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        maxLength={30}
-                        required
-                        autoComplete="username"
-                    />
-                </div>
-                <div className="input-group">
-                    <input
-                        name='password'
-                        placeholder='Password'
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        maxLength={64}
-                        required
-                        autoComplete="current-password"
-                    />
-                    <span 
-                        onClick={togglePasswordVisibility}
-                        style={{
-                            position: 'absolute',
-                            right: '10px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            cursor: 'pointer',
-                            fontSize: '14px'
-                        }}
-                    >
-                        <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-                    </span>
-                </div>
-                <button className="login-button" onClick={handleLogin}>Login</button>
+                <form onSubmit={handleLogin}>
+                    <div className="input-single">
+                        <input
+                            name='username'
+                            placeholder='Username'
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            maxLength={30}
+                            required
+                            autoComplete="username"
+                        />
+                    </div>
+                    <div className="input-group">
+                        <input
+                            name='password'
+                            placeholder='Password'
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            maxLength={64}
+                            required
+                            autoComplete="current-password"
+                        />
+                        <span 
+                            onClick={togglePasswordVisibility}
+                            style={{
+                                position: 'absolute',
+                                right: '10px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                        >
+                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+                        </span>
+                    </div>
+                    <button className="login-button" type="submit">Login</button>
+                </form>
                 {error && <p className="error-message">{error}</p>}
                 <p className="register-link">
                     Don't have an account?&nbsp;

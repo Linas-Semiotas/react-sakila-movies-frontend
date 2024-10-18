@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPersonalInfo, updatePersonalInfo, getAddressInfo, updateAddressInfo } from '../../services/userService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 
 const UserProfile = () => {
     const [personalError, setPersonalError] = useState('');

@@ -4,7 +4,7 @@ import { Box, Card, CardContent, Typography, Pagination } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import '../../styles/Movies.css';
 import { getAllMovies } from '../../services/movieService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 

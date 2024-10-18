@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLanguages, fetchMovies, fetchCategories, fetchActors, addMovie, updateMovie, deleteMovie } from '../../services/adminService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const AdminMovies = () => {
     const [languages, setLanguages] = useState([]);
@@ -43,8 +42,6 @@ const AdminMovies = () => {
     const [filteredMovies, setFilteredMovies] = useState([]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
 
     const ratings = ['G', 'PG', 'PG13', 'R', 'NC17'];
 
@@ -202,19 +199,11 @@ const AdminMovies = () => {
             });
     };
 
-    const handleDeleteClick = (id) => {
-        setItemToDelete(id);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        handleDeleteMovie(itemToDelete);
-        setShowModal(false);
-    };
-
-    const handleCancelDelete = () => {
-        setShowModal(false);
-    };
+    const { handleClickVar, ConfirmationModal } = Utils.useConfirmation(
+        handleDeleteMovie,
+        "Confirmation",
+        "Are you sure you want to delete this movie?"
+    );
 
     return (
         <div>
@@ -257,7 +246,7 @@ const AdminMovies = () => {
                                             <td style={{ width: '13%' }}>{movie.rating}</td>
                                             <td style={{ width: '23%' }}>
                                                 <button className='update-button' onClick={() => handleRowClick(movie)}>Update</button>
-                                                <button className='delete-button' onClick={() => handleDeleteClick(movie.id)}>Delete</button>
+                                                <button className='delete-button' onClick={() => handleClickVar(movie.id)}>Delete</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -266,13 +255,7 @@ const AdminMovies = () => {
                         </div>
                     </div>
                 </div>
-                <ConfirmationWindow
-                    show={showModal}
-                    name="Confirm delete"
-                    message="Are you sure you want to delete this movie?"
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                />
+                <ConfirmationModal />
             </div>
             <div className="admin-container">
                 <h3>{showAddForm ? "Add New Movie" : "Edit Movie Details"}</h3>
@@ -307,22 +290,22 @@ const AdminMovies = () => {
                         <label className="form-label" htmlFor="filmLength">Length</label>
                         <input
                             id="filmLength"
-                            max={600}
-                            type="number"
+                            max={999}
+                            type="text"
                             placeholder="Length"
                             name="filmLength"
                             value={showAddForm ? newMovie.filmLength : editMovie.filmLength}
                             onChange={(e) => {
-                                let value = e.target.value;
-                                if (!isNaN(value) && value !== '') {
-                                    value = parseInt(value, 10);
-                                    if (value > 999) {
-                                        value = 999;
-                                    }
-                                    if (value >= 0 && value <= 999) {
-                                        e.target.value = value;
-                                    }
+                                let inputValue = e.target.value;
+                                const validInput = /^[0-9]*$/;
+                                if (!validInput.test(inputValue)) {
+                                    return;
                                 }
+                                const numericValue = parseInt(inputValue, 10);
+                                if (numericValue > 999) {
+                                    inputValue = '999';
+                                }
+                                e.target.value = inputValue;
                                 handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
@@ -332,21 +315,21 @@ const AdminMovies = () => {
                         <input
                             id="rentalDuration"
                             max={365}
-                            type="number"
+                            type="text"
                             placeholder="Rental Duration"
                             name="rentalDuration"
                             value={showAddForm ? newMovie.rentalDuration : editMovie.rentalDuration}
                             onChange={(e) => {
-                                let value = e.target.value;
-                                if (!isNaN(value) && value !== '') {
-                                    value = parseInt(value, 10);
-                                    if (value > 365) {
-                                        value = 365;
-                                    }
-                                    if (value >= 0 && value <= 365) {
-                                        e.target.value = value;
-                                    }
+                                let inputValue = e.target.value;
+                                const validInput = /^[0-9]*$/;
+                                if (!validInput.test(inputValue)) {
+                                    return;
                                 }
+                                const numericValue = parseInt(inputValue, 10);
+                                if (numericValue > 365) {
+                                    inputValue = '365';
+                                }
+                                e.target.value = inputValue;
                                 handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
@@ -358,21 +341,21 @@ const AdminMovies = () => {
                         <input
                             id="releaseYear"
                             max={2100}
-                            type="number"
+                            type="text"
                             placeholder="Release Year"
                             name="releaseYear"
                             value={showAddForm ? newMovie.releaseYear : editMovie.releaseYear}
                             onChange={(e) => {
-                                let value = e.target.value;
-                                if (!isNaN(value) && value !== '') {
-                                    value = parseInt(value, 10);
-                                    if (value > 2100) {
-                                        value = 2100;
-                                    }
-                                    if (value >= 0 && value <= 2100) {
-                                        e.target.value = value;
-                                    }
+                                let inputValue = e.target.value;
+                                const validInput = /^[0-9]*$/;
+                                if (!validInput.test(inputValue)) {
+                                    return;
                                 }
+                                const numericValue = parseInt(inputValue, 10);
+                                if (numericValue > 2100) {
+                                    inputValue = '2100';
+                                }
+                                e.target.value = inputValue;
                                 handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
@@ -396,21 +379,21 @@ const AdminMovies = () => {
                         <input
                             id="replacementCost"
                             max={999}
-                            type="number"
+                            type="text"
                             placeholder="Replacement Cost"
                             name="replacementCost"
                             value={showAddForm ? newMovie.replacementCost : editMovie.replacementCost}
                             onChange={(e) => {
-                                let value = e.target.value;
-                                if (!isNaN(value) && value !== '') {
-                                    value = parseInt(value, 10);
-                                    if (value > 999) {
-                                        value = 999;
-                                    }
-                                    if (value >= 0 && value <= 999) {
-                                        e.target.value = value;
-                                    }
+                                let inputValue = e.target.value;
+                                const validInput = /^[0-9]*\.?[0-9]{0,2}$/;
+                                if (!validInput.test(inputValue)) {
+                                    return;
                                 }
+                                const numericValue = parseFloat(inputValue);
+                                if (numericValue > 999) {
+                                    inputValue = '999';
+                                }
+                                e.target.value = inputValue;
                                 handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"
@@ -420,21 +403,21 @@ const AdminMovies = () => {
                         <input
                             id="rentalRate"
                             max={999}
-                            type="number"
+                            type="text"
                             placeholder="Rental Rate"
                             name="rentalRate"
                             value={showAddForm ? newMovie.rentalRate : editMovie.rentalRate}
                             onChange={(e) => {
-                                let value = e.target.value;
-                                if (!isNaN(value) && value !== '') {
-                                    value = parseInt(value, 10);
-                                    if (value > 999) {
-                                        value = 999;
-                                    }
-                                    if (value >= 0 && value <= 999) {
-                                        e.target.value = value;
-                                    }
+                                let inputValue = e.target.value;
+                                const validInput = /^[0-9]*\.?[0-9]{0,2}$/;
+                                if (!validInput.test(inputValue)) {
+                                    return;
                                 }
+                                const numericValue = parseFloat(inputValue);
+                                if (numericValue > 999) {
+                                    inputValue = '999';
+                                }
+                                e.target.value = inputValue;
                                 handleInputChange(e, !showAddForm);
                             }}
                             className="input-field"

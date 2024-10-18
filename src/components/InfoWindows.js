@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/InfoWindows.css';
 
+//Create modal window that wants you to confirm your action
 export const ConfirmationWindow = ({ show, name, message, onConfirm, onCancel }) => {
     if (!show) return null;
 

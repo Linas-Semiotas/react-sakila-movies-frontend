@@ -1,57 +1,40 @@
-import createAxiosInstance from './axiosInstance';
+import apiRequest from '../utils/apiService';
 
-const axiosInstance = createAxiosInstance('/api/user');
+const API_URL = '/api/user';
 
 // ORDERS
 export const getOrders = async () => {
-    const response = await axiosInstance.get('/orders');
-    return response.data;
+    return await apiRequest('get', '/orders', null, API_URL);
 };
 
 // BALANCE
-// Fetch balance
 export const getBalance = async () => {
-    const response = await axiosInstance.get('/balance');
-    return response.data;
+    return await apiRequest('get', '/balance', null, API_URL);
 };
 
-// Add balance
 export const addBalance = async (amount) => {
-    const response = await axiosInstance.post('/balance/add', { amount });
-    return response.data;
+    return await apiRequest('post', '/balance/add', { amount }, API_URL);
 };
 
-// PROFILE
-// Fetch personal information
+// PROFILE > PERSONAL
 export const getPersonalInfo = async () => {
-    const response = await axiosInstance.get('/profile/personal-info');
-    return response.data;
+    return await apiRequest('get', '/profile/personal-info', null, API_URL);
 };
 
-// Update personal information
 export const updatePersonalInfo = async (personalInfo) => {
-    const response = await axiosInstance.put('/profile/personal-info', personalInfo);
-    return response.data;
+    return await apiRequest('put', '/profile/personal-info', personalInfo, API_URL);
 };
 
-// Fetch address information
+// PROFILE > ADDRESS
 export const getAddressInfo = async () => {
-    const response = await axiosInstance.get('/profile/address-info');
-    return response.data;
+    return await apiRequest('get', '/profile/address-info', null, API_URL);
 };
 
-// Update address information
 export const updateAddressInfo = async (addressInfo) => {
-    const response = await axiosInstance.put('/profile/address-info', addressInfo);
-    return response.data;
+    return await apiRequest('put', '/profile/address-info', addressInfo, API_URL);
 };
 
 // SECURITY
-// Change password
 export const changePassword = async (currentPassword, newPassword) => {
-    const response = await axiosInstance.post('/security/change-password', {
-        currentPassword,
-        newPassword
-    });
-    return response.data;
+    return await apiRequest('post', '/security/change-password', {currentPassword, newPassword}, API_URL);
 };

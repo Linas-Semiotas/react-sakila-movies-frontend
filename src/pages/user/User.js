@@ -7,6 +7,7 @@ import Balance from './UserBalance';
 import Profile from './UserProfile';
 import Security from './UserSecurity';
 
+//Page adds tabs navigation for user dashboard pages
 const User = () => {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();

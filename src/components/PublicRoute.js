@@ -3,7 +3,8 @@ import { getToken } from '../services/authService';
 
 const PublicRoute = ({ children }) => {
     const token = getToken();
-
+    
+    //Go to homepage if you are authenticated
     if (token) {
         return <Navigate to="/home" />;
     }

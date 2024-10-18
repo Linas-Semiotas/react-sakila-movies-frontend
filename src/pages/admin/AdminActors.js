@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchActors, addActor, deleteActor } from '../../services/adminService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const AdminActors = () => {
     const [actors, setActors] = useState([]);
@@ -11,8 +10,6 @@ const AdminActors = () => {
     const [filteredActors, setFilteredActors] = useState([]);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null); 
-    const [showModal, setShowModal] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         fetchActors()
@@ -69,19 +66,11 @@ const AdminActors = () => {
             .catch(err => Utils.handleResponse(err, setError, 'Error deleting actor. It might be in use.'));
     };
 
-    const handleDeleteClick = (id) => {
-        setItemToDelete(id);
-        setShowModal(true);
-    };
-
-    const handleConfirmDelete = () => {
-        handleDeleteActor(itemToDelete);
-        setShowModal(false);
-    };
-
-    const handleCancelDelete = () => {
-        setShowModal(false);
-    };
+    const { handleClickVar, ConfirmationModal } = Utils.useConfirmation(
+        handleDeleteActor,
+        "Confirmation",
+        "Are you sure you want to delete this actor?"
+    );
 
     return (
         <div className="admin-container">
@@ -116,7 +105,7 @@ const AdminActors = () => {
                                         <td style={{ width: '35%', textAlign: 'left' }}>{actor.firstName}</td>
                                         <td style={{ width: '35%', textAlign: 'left' }}>{actor.lastName}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleDeleteClick(actor.id)}>Delete</button>
+                                            <button className="delete-button" onClick={() => handleClickVar(actor.id)}>Delete</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -149,13 +138,7 @@ const AdminActors = () => {
                     </div>
                 </div>
             </div>
-            <ConfirmationWindow
-                show={showModal}
-                name="Confirmation"
-                message="Are you sure you want to delete this Actor?"
-                onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
-            />
+            <ConfirmationModal />
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
         </div>

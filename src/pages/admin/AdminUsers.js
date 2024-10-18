@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUsers, updateUser } from '../../services/adminService';
-import Utils from '../../components/Utility';
-import { ConfirmationWindow } from '../../components/InfoWindows';
+import Utils from '../../utils/Utility';
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -11,7 +10,6 @@ const AdminUsers = () => {
     const [search, setSearch] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         fetchUsers()
@@ -89,18 +87,11 @@ const AdminUsers = () => {
         .catch(err => Utils.handleResponse(err, setError, 'Error saving changes. Please try again.'));
     };
 
-    const handleSaveClick = () => {
-        setShowModal(true);
-    };
-
-    const handleConfirmSave = () => {
-        saveChanges();
-        setShowModal(false);
-    };
-
-    const handleCancelSave = () => {
-        setShowModal(false);
-    };
+    const { handleClick, ConfirmationModal } = Utils.useConfirmation(
+        saveChanges,
+        "Confirmation",
+        "Are you sure you want to update user?"
+    );
 
     return (
         <div className="admin-container">
@@ -176,19 +167,13 @@ const AdminUsers = () => {
                                 onChange={handleCheckboxChange}
                             />
                         </div>
-                        <button className="submit-button" onClick={handleSaveClick}>Save Changes</button>
+                        <button className="submit-button" onClick={handleClick}>Save Changes</button>
                     </div>                
                 )}
             </div>
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
-            <ConfirmationWindow
-                show={showModal}
-                name="Confirmation"
-                message="Are you sure you want to update user?"
-                onConfirm={handleConfirmSave}
-                onCancel={handleCancelSave}
-            />
+            <ConfirmationModal/>
         </div>
     );
 };

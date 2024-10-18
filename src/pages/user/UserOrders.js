@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/User.css';
 import { getOrders } from '../../services/userService';
-import Utils from '../../components/Utility';
+import Utils from '../../utils/Utility';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TablePagination, Paper
