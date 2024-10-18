@@ -33,12 +33,12 @@ const Movies = () => {
     const years = [...new Set(movies.map(movie => movie.releaseYear))];
 
     const filteredMovies = movies.filter(movie => {
+        const categoryMatch = selectedCategory === '' || (Array.isArray(movie.category) && movie.category.includes(selectedCategory));
         return (
             (selectedLanguage === '' || movie.language === selectedLanguage) &&
-            (selectedCategory === '' || movie.category === selectedCategory) &&
+            categoryMatch  &&
             (selectedYear === '' || movie.releaseYear === parseInt(selectedYear)) &&
-            (movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            movie.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            movie.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
     });
 

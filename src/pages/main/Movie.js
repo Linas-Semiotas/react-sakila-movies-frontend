@@ -31,6 +31,7 @@ const Movie = () => {
                             <p className="movie-info"><strong>Duration:</strong> {movie.filmLength} min.</p>
                             <p className="movie-info"><strong>Rating:</strong> {movie.rating}</p>
                             <p className="movie-info"><strong>Language:</strong> {movie.language}</p>
+                            <p className="movie-info"><strong>Special features:</strong> {movie.specialFeatures}</p>
                             <p className="movie-info"><strong>Stars: </strong>
                                 {movie.actors.map(actor => actor).join(" • ")}
                             </p>
