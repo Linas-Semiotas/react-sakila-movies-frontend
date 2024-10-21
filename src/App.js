@@ -17,15 +17,14 @@ import ErrorPage from './pages/other/ErrorPage';
 import RegisterSuccess from './pages/other/RegisterSuccess';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
-import { getToken, getUserRoles, getUsername, logout } from './services/authService';
-import { jwtDecode } from 'jwt-decode';
+import { getUserInfo, logout, refreshToken } from './services/authService';
+import { ExpirationTime, IdleTime } from './utils/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faBars } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
-    const [userRoles, setUserRoles] = useState([]);
+    const [userInfo, setUserInfo] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
@@ -33,38 +32,45 @@ const App = () => {
     const handleLogout = useCallback(() => {
         logout();
         setIsLoggedIn(false);
-        setUserRoles([]);
-        navigate('/login');
-    },[navigate]);
-
-    useEffect(() => {
-        const token = getToken();
-        if (token) {
-            setIsLoggedIn(true);
-            setUserRoles(getUserRoles());
-            setUsername(getUsername());
-
-            const decodedToken = jwtDecode(token);
-            const expirationTime = decodedToken.exp * 1000;
-
-            const timeout = expirationTime - Date.now();
-            if (timeout > 0) {
-                setTimeout(() => {
-                    handleLogout();
-                }, timeout);
-            } else {
-                handleLogout();
-            }
-        } else {
-            setIsLoggedIn(false);
-            setUserRoles([]);
-            setUsername('');
-        }
-    }, [handleLogout]);
-
-    useEffect(() => {
+        setUserInfo(null);
         setShowDropdown(false);
-    }, [isLoggedIn]);
+        navigate('/login');
+    }, [navigate]);
+
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            const userInfo = await getUserInfo();
+            if (userInfo && userInfo.username) { // If backend returned user info
+                setIsLoggedIn(true);
+                setUserInfo(userInfo); 
+            } else {
+                setIsLoggedIn(false);
+                setUserInfo(null);
+            }
+        };
+    
+        checkAuthStatus(); // Check authentication status on page load
+    }, []);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            const refreshBeforeExpiration = ExpirationTime - IdleTime; // 5 minutes before token expiration. You can change times in config
+
+            const interval = setTimeout(() => {
+                refreshToken()
+                    .then(newToken => {
+                        if (newToken) {
+                            console.log("Token refreshed successfully");
+                        } else {
+                            console.log("Failed to refresh token");
+                            handleLogout(); // Log out if refresh fails
+                        }
+                    });
+            }, refreshBeforeExpiration);
+
+            return () => clearInterval(interval); // Clear interval on component unmount
+        }
+    }, [isLoggedIn, handleLogout]);
 
     const toggleMobileMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -102,12 +108,12 @@ const App = () => {
                     {isLoggedIn ? (
                         <div className="profile-dropdown">
                             <div className="profile-button" onClick={toggleDropdown}>
-                                {username || "Profile"}&nbsp;&nbsp;
+                                {userInfo?.username || "Profile"}&nbsp;&nbsp;
                                 <FontAwesomeIcon style={{fontSize: "10px"}} icon={faChevronDown} />
                             </div>
                             {showDropdown && (
                                 <div className="dropdown-menu">
-                                    {userRoles.includes('ROLE_USER') && (
+                                    {userInfo?.roles?.includes('ROLE_USER') && (
                                         <>
                                             <Link onClick={toggleDropdown} to="/user/orders" className="dropdown-item">Orders</Link>
                                             <Link onClick={toggleDropdown} to="/user/balance" className="dropdown-item">Balance</Link>
@@ -115,7 +121,7 @@ const App = () => {
                                             <Link onClick={toggleDropdown} to="/user/security" className="dropdown-item">Security</Link>
                                         </>
                                     )}
-                                    {userRoles.includes('ROLE_ADMIN') && (
+                                    {userInfo?.roles?.includes('ROLE_ADMIN') && (
                                         <Link onClick={toggleDropdown} to="/admin" className="dropdown-item">Admin</Link>
                                     )}
                                     <div onClick={handleLogout} className="dropdown-item logout-button">Logout</div>
@@ -134,13 +140,13 @@ const App = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/movies" element={<Movies />} />
                     <Route path="/movies/:id" element={<Movie />} />
-                    <Route path="/rental" element={<PrivateRoute><Rental /></PrivateRoute>} />
-                    <Route path="/rental/:id" element={<PrivateRoute><Rent /></PrivateRoute>} />
+                    <Route path="/rental" element={<PrivateRoute isLoggedIn={isLoggedIn}><Rental /></PrivateRoute>} />
+                    <Route path="/rental/:id" element={<PrivateRoute isLoggedIn={isLoggedIn}><Rent /></PrivateRoute>} />
                     <Route path="/stores" element={<Stores />} />
-                    <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-                    <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-                    <Route path="/user/*" element={<PrivateRoute requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
-                    <Route path="/admin/*" element={<PrivateRoute requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
+                    <Route path="/login" element={<PublicRoute isLoggedIn={isLoggedIn}><Login setIsLoggedIn={setIsLoggedIn} setUserInfo={setUserInfo} /></PublicRoute>} />
+                    <Route path="/register" element={<PublicRoute isLoggedIn={isLoggedIn}><Register /></PublicRoute>} />
+                    <Route path="/user/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
+                    <Route path="/admin/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
                     <Route path="/TODO" element={<Notes />} />
                     <Route path="/register-success" element={<RegisterSuccess />} />
                     <Route path="/error" element={<ErrorPage />} />

@@ -1,88 +1,34 @@
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import BASE_URL from '../utils/config';
+import apiRequest from '../utils/apiService';
 
-const API_URL = BASE_URL + '/api/auth';
+const API_URL = '/api/auth';
 
-axios.interceptors.response.use(
-    response => response,
-    error => {
-        if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-        }
-        return Promise.reject(error);
-    }
-);
-
-export const getToken = () => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-
+export const getUserInfo = async () => {
     try {
-        const decoded = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-
-        if (decoded.exp < currentTime) {
-            logout();
-            return null;
-        }
-
-        return token;
+        return await apiRequest('get', '/me', null, API_URL, true);
     } catch (error) {
-        console.error('Error decoding token:', error);
-        logout();
-        return null;
-    }
-};
-
-export const getUsername = () => {
-    const token = getToken();
-    if (!token) return null;
-
-    try {
-        const decoded = jwtDecode(token);
-        return decoded.sub || '';
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return '';
-    }
-};
-
-export const getUserRoles = () => {
-    const token = getToken();
-    if (!token) return null;
-
-    try {
-        const decoded = jwtDecode(token);
-        return decoded.roles || [];
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return null;
+        return error.response?.status === 401 ? null : console.error("Error fetching user info:", error) || null;
     }
 };
 
 export const login = async (username, password) => {
-    const response = await axios.post(`${API_URL}/login`, {
-        username,
-        password
-    }, {
-        withCredentials: true
-    });
-    return response.data;
+    return await apiRequest('post', '/login', { username, password }, API_URL, true);
 };
 
 export const register = async (username, password, firstName, lastName, email, storeId) => {
-    const response = await axios.post(`${API_URL}/register`, {
+    return await apiRequest('post', '/register', {
         username,
         password,
         firstName,
         lastName,
         email,
         storeId
-    });
-    return response.data;
+    }, API_URL);
 };
 
 export const logout = async () => {
-    localStorage.removeItem('token');
+    return await apiRequest('post', '/logout', {}, API_URL, true);
+};
+
+export const refreshToken = async () => {
+    return await apiRequest('post', '/refresh-token', {}, API_URL, true);
 };

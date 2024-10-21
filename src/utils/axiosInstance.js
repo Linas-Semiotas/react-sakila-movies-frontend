@@ -1,26 +1,27 @@
 import axios from 'axios';
-import { getToken } from '../services/authService';
-import BASE_URL from './config';
+import { BASE_URL } from './config';
+import { logout } from '../services/authService';
 
 const createAxiosInstance = (endpoint) => {
     // Create an instance of axios with a custom configuration
     const axiosInstance = axios.create({
-        baseURL: BASE_URL + endpoint,
-        headers: {
-            'Content-Type': 'application/json',
-        }
+        baseURL: `${BASE_URL}${endpoint}`, // Base URL for the API endpoint
+        withCredentials: true // Ensure cookies are sent with each request
     });
 
-    // Add a request interceptor to include the token in every request
-    axiosInstance.interceptors.request.use(
-        (config) => {
-            const token = getToken();
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
+    axiosInstance.interceptors.response.use(
+        response => response,
+        error => {
+            const { response } = error;
+
+            if (response && response.status === 401) {
+                // Token expired or user not authenticated
+                logout();  // Perform logout action
+                window.location.href = '/login';  // Redirect to login page
             }
-            return config;
-        },
-        (error) => Promise.reject(error)
+
+            return Promise.reject(error);
+        }
     );
 
     // Add a response interceptor to handle global errors

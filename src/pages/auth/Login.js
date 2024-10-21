@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
+import { getUserInfo } from '../../services/authService';
 import Utils from '../../utils/Utility';
 import '../../styles/Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-const Login = () => {
+const Login = ({ setIsLoggedIn, setUserInfo }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -22,8 +23,10 @@ const Login = () => {
         setError('');
     
         login(username, password)
-            .then(data => {
-                localStorage.setItem('token', data.token);
+            .then(async (data) => {
+                const userInfo = await getUserInfo();
+                setIsLoggedIn(true);
+                setUserInfo(userInfo);
                 navigate('/home');
             })
             .catch(err => Utils.handleResponse(err, setError, 'An error occurred during login'));

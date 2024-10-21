@@ -1,6 +1,6 @@
 import createAxiosInstance from './axiosInstance';
 
-const apiRequest = async (method, url, data = null, endpoint) => {
+const apiRequest = async (method, url, data = null, endpoint, sendCredentials = false) => {
     const axiosInstance = createAxiosInstance(endpoint);
 
     try {
@@ -9,6 +9,10 @@ const apiRequest = async (method, url, data = null, endpoint) => {
             url: url,
             data: data,
         };
+
+        if (sendCredentials) {
+            config.withCredentials = true;
+        }
 
         const response = await axiosInstance(config);
         return response.data;
