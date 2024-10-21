@@ -21,6 +21,11 @@ The frontend for **Sakila Movies** is built using **React**, offering a user-fri
   
 - **Responsive Design**: Built to be mobile-friendly and accessible across devices.
 
+- **Security Enhancements**:
+  - Tokens are now stored in HTTP-only cookies instead of local storage for enhanced security.
+  - Automatic inactivity logout based on token expiration.
+  - Active users benefit from token refreshing, extending session longevity while they're active.
+
 ## Available Scripts
 - In the project directory, you can run:
 
@@ -46,6 +51,7 @@ The frontend for **Sakila Movies** is built using **React**, offering a user-fri
 - **Axios**: For making HTTP requests to the backend API.
 - **React Router DOM**: For routing between pages.
 - **FontAwesome**: For icons.
+- **Secure Cookies**: For safe token storage and user session management.
 
 ## Key Components
 - **PrivateRoute & PublicRoute**: Components to manage access based on authentication and user roles.

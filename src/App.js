@@ -12,7 +12,6 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import User from './pages/user/User';
 import Admin from './pages/admin/Admin';
-import Notes from './components/Notes';
 import ErrorPage from './pages/other/ErrorPage';
 import RegisterSuccess from './pages/other/RegisterSuccess';
 import PrivateRoute from './components/PrivateRoute';
@@ -25,6 +24,7 @@ import { faChevronDown, faBars } from '@fortawesome/free-solid-svg-icons';
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
@@ -47,6 +47,7 @@ const App = () => {
                 setIsLoggedIn(false);
                 setUserInfo(null);
             }
+            setLoading(false);
         };
     
         checkAuthStatus(); // Check authentication status on page load
@@ -72,6 +73,10 @@ const App = () => {
         }
     }, [isLoggedIn, handleLogout]);
 
+    if (loading) {
+        return <div>Loading...</div>; // Display while waiting for the auth check to complete
+    }
+
     const toggleMobileMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -89,7 +94,6 @@ const App = () => {
                     <Link to="/movies">Movies</Link>
                     <Link to="/rental">Rental</Link>
                     <Link to="/stores">Stores</Link>
-                    <Link to="/TODO">TODO</Link>
                 </nav>
                 <div className="hamburger-icon" onClick={toggleMobileMenu}>
                     <FontAwesomeIcon icon={faBars} />
@@ -101,7 +105,6 @@ const App = () => {
                         <Link onClick={toggleMobileMenu} to="/movies">Movies</Link>
                         <Link onClick={toggleMobileMenu} to="/rental">Rental</Link>
                         <Link onClick={toggleMobileMenu} to="/stores">Stores</Link>
-                        <Link onClick={toggleMobileMenu} to="/TODO">TODO</Link>
                     </div>
                 )}
                 <div className="header-space-150 header-space-150-end">
@@ -147,7 +150,6 @@ const App = () => {
                     <Route path="/register" element={<PublicRoute isLoggedIn={isLoggedIn}><Register /></PublicRoute>} />
                     <Route path="/user/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
                     <Route path="/admin/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
-                    <Route path="/TODO" element={<Notes />} />
                     <Route path="/register-success" element={<RegisterSuccess />} />
                     <Route path="/error" element={<ErrorPage />} />
                     <Route path="*" element={<ErrorPage />} />
