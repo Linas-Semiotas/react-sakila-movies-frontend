@@ -1,13 +1,31 @@
 # Sakila Movies Frontend
 
+## Overview
+This project is the frontend for the Sakila Movies application, built with React. It provides a user-friendly interface for managing movie rentals, customer profiles, and role-based actions. The frontend communicates with a Spring Boot backend to perform CRUD operations and offers role-specific functionalities, allowing users to view and manage personal data, while admins oversee movie entries, customer accounts, and rentals.
+
 ## Description
-The frontend for **Sakila Movies** is built using **React**, offering a user-friendly interface for managing movie data. The frontend interacts with a **RESTful backend API** to handle operations such as viewing rented movies, managing user profiles, and performing admin tasks like managing movie entries. The frontend handles both **USER** and **ADMIN** role-specific actions.
+The **Sakila Movies** frontend is developed using **React**, designed for a seamless user experience. It communicates with a **RESTful API** backend to retrieve and manage movie-related data. Key functionalities include viewing available movies, editing customer profiles, and role-based features—users can access personal rental data, while admins perform tasks like adding or removing movies and handling customer transactions. The frontend employs modern **React hooks** for state management, responsive design techniques, and secure API communication via JWT-based authentication.
+
+## Getting Started
+1. Clone this repository:
+    ```bash
+    git clone https://github.com/Linas-Semiotas/react-sakila-movies-frontend.git
+    ```
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+3. Start the development server:
+    ```bash
+    npm start
+    ```
+Make sure the backend server is running and reachable at `http://localhost:8080` for full functionality.
 
 ## Features
 - **User Role Management**:
   - **USER**:
     - View rented movies.
-    - Add fake balance.
+    - Add (fake) balance.
     - Update personal information and change password (in separate pages).
   - **ADMIN**:
     - Add, update, and delete movies, actors, languages, and categories.
@@ -56,21 +74,8 @@ The frontend for **Sakila Movies** is built using **React**, offering a user-fri
 ## Key Components
 - **PrivateRoute & PublicRoute**: Components to manage access based on authentication and user roles.
 - **ConfirmationWindow**: A modal for confirming user actions, such as deletions.
-- **ErrorPage**: A component to display error messages based on user navigation, such as 401 or 403 errors.
+- **ErrorPage**: A component to display error messages based on user navigation, such as 401, 403 or 404 errors.
 
-## Setup Instructions
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Linas-Semiotas/react-sakila-movies-frontend.git
-   ```
-2. Navigate to the project directory and install dependencies:
-    ```bash
-    npm install
-    ```
-3. Start the development server:
-    ```bash
-    npm start
-    ```
 ## Contact
 - Name: Linas Šemiotas
 - Email: linas.semiotas@gmail.com
