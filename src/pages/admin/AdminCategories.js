@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useFormik } from 'formik';
+import { categorySchema } from '../../utils/schemas';
+import { TooltipFormikInput } from '../../components/Input';
+import { Form } from '../../components/Form';
+import { DeleteButton } from '../../components/Button';
 import { fetchCategories, addCategory, deleteCategory } from '../../services/adminService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
-    const [newCategory, setNewCategory] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
@@ -14,21 +18,23 @@ const AdminCategories = () => {
             .catch(err => Utils.handleResponse(err, setError, "Error fetching categories."));
     }, []);
 
-    const handleAddCategory = () => {
-        Utils.resetResponse(setError, setSuccess);
-        
-        if (!newCategory.trim()) {
-            return Utils.handleResponse(null, setError, "Category name cannot be empty.");
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+        },
+        validationSchema: categorySchema,
+        onSubmit: (values, { resetForm }) => {
+            Utils.resetResponse(setError, setSuccess);
+
+            addCategory(values.name)
+                .then((response) => {
+                    Utils.handleResponse(response, setSuccess, 'Category added successfully.');
+                    fetchCategories().then(setCategories);
+                    resetForm();
+                })
+                .catch(err => Utils.handleResponse(err, setError, 'Error adding category.'));
         }
-        
-        addCategory(newCategory)
-            .then((response) => {
-                Utils.handleResponse(response, setSuccess, "Category added successfully.");
-                Utils.resetResponse(setNewCategory);
-                fetchCategories().then(setCategories);
-            })
-            .catch(err => Utils.handleResponse(err, setError, "Error adding category."));
-    };
+    });
 
     const handleDeleteCategory = (categoryId) => {
         Utils.resetResponse(setError, setSuccess);
@@ -69,7 +75,7 @@ const AdminCategories = () => {
                                     <tr key={categ.id}>
                                         <td style={{ width: '70%', textAlign: 'left' }}>{categ.name}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleClickVar(categ.id)}>Delete</button>
+                                        <DeleteButton onClick={() => handleClickVar(categ.id)}/>
                                         </td>
                                     </tr>
                                 ))}
@@ -79,18 +85,17 @@ const AdminCategories = () => {
                 </div>
                 <div className="admin-details admin-details-category">
                     <h3>Add New Category</h3>
-                    <div className="input-wrapper">
-                        <input
-                            name='category'
-                            maxLength={50}
-                            type="text"
+                    <Form onSubmit={formik.handleSubmit} buttonText="Add Category">
+                        <TooltipFormikInput
+                            name="name"
+                            value={formik.values.name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             placeholder="New Category"
-                            value={newCategory}
-                            onChange={(e) => setNewCategory(e.target.value)}
-                            className="input-field"
+                            error={formik.errors.name}
+                            touched={formik.touched.name}
                         />
-                        <button className="add-button" onClick={handleAddCategory}>Add</button>
-                    </div>
+                    </Form>
                 </div>
             </div>
             <ConfirmationModal />

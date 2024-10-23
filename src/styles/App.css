@@ -34,43 +34,46 @@ input[type="number"] {
   height: 65px;
 }
 
+/* Responses */
+
 .error-message {
+  max-width: 900px;
+  width: 98%;
   color: #721c24;
-  text-align: center;
   background-color: #f8d7da;
   border: 1px solid #f5c6cb;
+  font-size: 14px;
   border-radius: 4px;
-  padding: 8px;
-  margin: 10px 0;
+  padding: 5px 0;
+  margin: 10px auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .success-message {
+  max-width: 900px;
+  width: 95%;
   color: #23721c;
-  text-align: center;
   background-color: #d7f8da;
   border: 1px solid #d1f5c6;
+  font-size: 14px;
   border-radius: 4px;
-  padding: 8px;
-  margin: 10px 0;
+  padding: 5px;
+  margin: 10px auto;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .info-message {
+  max-width: 900px;
+  width: calc(100% - 2px);
   color: #0c5460;
   text-align: center;
   background-color: #d1ecf1;
   border: 1px solid #bee5eb;
+  font-size: 14px;
   border-radius: 4px;
   padding: 8px;
   margin: 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
 }
 
 /* Colors */
@@ -262,30 +265,20 @@ input[type="number"] {
   background-color: #555;
 }
 
-/* MAIN CONTENT */
-.page-title{
-  font-size: 2em;
-  font-weight: bold;
-  width: 100%;
-  padding: 25px 0px;
-  border-bottom: solid 1px #333;
-  text-align: center;
-  background-color: #eee;
-}
-
-.content {
-  flex-grow: 1;
-  background-color: #f4f4f4;
-}
-
 /* FOOTER */
 .footer {
   background-color: #333;
-  color: white;
   text-align: center;
-  padding: 1rem;
+  padding: 0.5rem;
   position: relative;
   bottom: 0;
   width: 100%;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer p {
+  color: white;
 }

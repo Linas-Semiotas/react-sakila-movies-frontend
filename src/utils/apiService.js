@@ -17,7 +17,6 @@ const apiRequest = async (method, url, data = null, endpoint, sendCredentials = 
         const response = await axiosInstance(config);
         return response.data;
     } catch (error) {
-        console.error('API Request Error:', error);
         throw error;
     }
 };

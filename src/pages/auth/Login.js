@@ -1,88 +1,64 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../../services/authService';
-import { getUserInfo } from '../../services/authService';
-import Utils from '../../utils/Utility';
-import '../../styles/Login.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useFormik } from 'formik';
+import { loginSchema } from '../../utils/schemas';
+import { TooltipFormikInput, TooltipFormikPasswordInput } from '../../components/Input';
+import { MainContainerSmall } from '../../components/Containers';
+import { Form } from '../../components/Form';
+import { login, getUserInfo } from '../../services/authService';
+import Utils from '../../utils/utility';
 
 const Login = ({ setIsLoggedIn, setUserInfo }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleLogin = (e) => {
-        e.preventDefault();
-        setError('');
-    
-        login(username, password)
-            .then(async (data) => {
-                const userInfo = await getUserInfo();
-                setIsLoggedIn(true);
-                setUserInfo(userInfo);
-                navigate('/home');
-            })
-            .catch(err => Utils.handleResponse(err, setError, 'An error occurred during login'));
-    };
+    const formik = useFormik({
+        initialValues: {
+            username: '',
+            password: ''
+        },
+        validationSchema: loginSchema,
+        onSubmit: async (values, { setErrors }) => {
+            setError('');
+            login(values.username, values.password)
+                .then(async (data) => {
+                    const userInfo = await getUserInfo();
+                    setIsLoggedIn(true);
+                    setUserInfo(userInfo);
+                    navigate('/home');
+                })
+                .catch(err => Utils.handleResponse(err, setError, 'An error occurred during login'));
+        }
+    });
 
     return (
-        <div className="login-container">
-            <div className='page-title'>Login</div>
-            <div className="login-wrapper">
-                <form onSubmit={handleLogin}>
-                    <div className="input-single">
-                        <input
-                            name='username'
-                            placeholder='Username'
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            maxLength={30}
-                            required
-                            autoComplete="username"
-                        />
-                    </div>
-                    <div className="input-group">
-                        <input
-                            name='password'
-                            placeholder='Password'
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            maxLength={64}
-                            required
-                            autoComplete="current-password"
-                        />
-                        <span 
-                            onClick={togglePasswordVisibility}
-                            style={{
-                                position: 'absolute',
-                                right: '10px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                            }}
-                        >
-                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-                        </span>
-                    </div>
-                    <button className="login-button" type="submit">Login</button>
-                </form>
-                {error && <p className="error-message">{error}</p>}
-                <p className="register-link">
-                    Don't have an account?&nbsp;
-                    <Link to={`/register`}>Create an account</Link>
-                </p>
-            </div>
-        </div>
+        <MainContainerSmall title="Login">
+            <Form onSubmit={formik.handleSubmit} buttonText="Login">
+                <TooltipFormikInput
+                    name="username"
+                    value={formik.values.username}
+                    onChange={formik.handleChange}
+                    placeholder="Username"
+                    error={formik.errors.username}
+                    touched={formik.touched.username}
+                    label="Username"
+                />
+                <TooltipFormikPasswordInput
+                    name="password"
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    placeholder="Password"
+                    error={formik.errors.password}
+                    touched={formik.touched.password}
+                    label="Password"
+                />
+            </Form>
+            {error && <p className="error-message">{error}</p>}
+            <p className="register-link">
+                Don't have an account?&nbsp;
+                <Link to={`/register`}>Create an account</Link>
+            </p>
+        </MainContainerSmall>
     );
 };
 

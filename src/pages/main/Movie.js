@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import '../../styles/Movie.css';
+import { AddButton } from '../../components/Button';
+import { MainContainer } from '../../components/Containers';
 import { getMovieById } from '../../services/movieService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const Movie = () => {
     const { id } = useParams();
@@ -16,7 +17,7 @@ const Movie = () => {
     }, [id]);
 
     return (
-        <div className="movie-container">
+        <MainContainer title="">
             {movie ? (
                 <div>
                     <div className="movie-header">
@@ -39,11 +40,15 @@ const Movie = () => {
                         </div>
                     </div>
                     <p className="movie-description">{movie.description}</p>
-                    <Link to={`/rental/${movie.id}`} key={movie.id} className='link-button'>Go to rent page</Link>
+                    <Link to={`/rental/${movie.id}`} key={movie.id}>
+                        <AddButton
+                            text="Go to rent page"
+                        />
+                    </Link>
                 </div>
             ) : null}
             {error && <p  className="error-message">{error}</p>}
-        </div>
+        </MainContainer>
     );
 };
 

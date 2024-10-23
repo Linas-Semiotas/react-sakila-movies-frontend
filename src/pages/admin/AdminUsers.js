@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { CheckboxInput, SimpleInput } from '../../components/Input';
+import { SubmitButton } from '../../components/Button';
 import { fetchUsers, updateUser } from '../../services/adminService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
@@ -98,16 +100,13 @@ const AdminUsers = () => {
             <h2>Permissions</h2>
             <div className='admin-container-row'>
                 <div className="admin-table-container">
-                    <div className="input-wrapper search">
-                        <input
-                            name='search'
-                            maxLength={50}
-                            type="text"
-                            placeholder="Search users..."
-                            value={search}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
+                    <SimpleInput 
+                        name="search"
+                        maxLength={50}
+                        placeholder="Search for users..."
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
                     <table className="admin-table">
                         <thead className="admin-table-header">
                             <tr>
@@ -137,38 +136,27 @@ const AdminUsers = () => {
                 {selectedUser && (
                     <div className="admin-details">
                         <h3>{selectedUser.username}</h3>
-                        <div className="checkbox-row">
-                            <label htmlFor='userRole'>User</label>
-                            <input
-                                id="userRole"
-                                type="checkbox"
-                                name="userRole"
-                                checked={selectedUser.userRole}
-                                onChange={handleCheckboxChange}
-                            />
-                        </div>
-                        <div className="checkbox-row">
-                            <label htmlFor='adminRole'>Admin</label>
-                            <input
-                                id="adminRole"
-                                type="checkbox"
-                                name="adminRole"
-                                checked={selectedUser.adminRole}
-                                onChange={handleCheckboxChange}
-                            />
-                        </div>
-                        <div className="checkbox-row">
-                            <label htmlFor='enabled'>Enabled</label>
-                            <input
-                                id='enabled'
-                                type="checkbox"
-                                name="enabled"
-                                checked={selectedUser.enabled}
-                                onChange={handleCheckboxChange}
-                            />
-                        </div>
-                        <button className="submit-button" onClick={handleClick}>Save Changes</button>
-                    </div>                
+                        <CheckboxInput
+                            name="userRole"
+                            checked={selectedUser.userRole}
+                            onChange={handleCheckboxChange}
+                            label="Role: USER"
+                        />
+                        <CheckboxInput
+                            name="adminRole"
+                            checked={selectedUser.adminRole}
+                            onChange={handleCheckboxChange}
+                            label="Role: ADMIN"
+                        />
+                        <CheckboxInput
+                            name="enabled"
+                            checked={selectedUser.enabled}
+                            onChange={handleCheckboxChange}
+                            label="Enabled?"
+                            margin="5px 0 20px 0"
+                        />
+                        <SubmitButton text="Save changes" type='button' onClick={handleClick}/>
+                    </div>              
                 )}
             </div>
             {error && <p className="error-message">{error}</p>}

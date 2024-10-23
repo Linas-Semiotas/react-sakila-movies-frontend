@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useFormik } from 'formik';
+import { actorSchema } from '../../utils/schemas';
+import { TooltipFormikInput, SimpleInput } from '../../components/Input';
+import { Form } from '../../components/Form';
+import { DeleteButton } from '../../components/Button';
 import { fetchActors, addActor, deleteActor } from '../../services/adminService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const AdminActors = () => {
     const [actors, setActors] = useState([]);
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
     const [search, setSearch] = useState('');
     const [filteredActors, setFilteredActors] = useState([]);
     const [error, setError] = useState(null);
@@ -32,25 +35,26 @@ const AdminActors = () => {
         setFilteredActors(filtered);
     };
 
-    const handleAddActor = () => {
-        Utils.resetResponse(setError, setSuccess);
-
-        if (!firstName.trim() || !lastName.trim()) {
-            Utils.handleResponse(null, setError, 'Both first and last name are required.');
-            return;
+    const formik = useFormik({
+        initialValues: {
+            firstName: '',
+            lastName: ''
+        },
+        validationSchema: actorSchema,
+        onSubmit: (values, { resetForm }) => {
+            Utils.resetResponse(setError, setSuccess);
+            addActor(values.firstName, values.lastName)
+                .then((response) => {
+                    Utils.handleResponse(response, setSuccess, 'Actor added successfully.');
+                    fetchActors().then((data) => {
+                        setActors(data);
+                        setFilteredActors(data);
+                    });
+                    resetForm();
+                })
+                .catch(err => Utils.handleResponse(err, setError, 'Error adding actor.'));
         }
-
-        addActor(firstName, lastName)
-            .then((response) => {
-                Utils.handleResponse(response, setSuccess, 'Actor added successfully.');
-                Utils.resetResponse(setFirstName, setLastName);
-                fetchActors().then((data) => {
-                    setActors(data);
-                    setFilteredActors(data);
-                });
-            })
-            .catch(err => Utils.handleResponse(err, setError, 'Error adding actor.'));
-    };
+    });
 
     const handleDeleteActor = async (actorId) => {
         Utils.resetResponse(setError, setSuccess);
@@ -77,16 +81,13 @@ const AdminActors = () => {
             <h2>Actors</h2>
             <div className="admin-container-row">
                 <div className="admin-table-container admin-table-container-actor">
-                    <div className="input-wrapper search">
-                        <input
-                            name='search'
-                            maxLength={50}
-                            type="text"
-                            placeholder="Search users..."
-                            value={search}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
+                    <SimpleInput 
+                        name="search"
+                        maxLength={50}
+                        placeholder="Search for actors..."
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
                     <table className="admin-table">
                         <thead className="admin-table-header">
                             <tr>
@@ -105,7 +106,7 @@ const AdminActors = () => {
                                         <td style={{ width: '35%', textAlign: 'left' }}>{actor.firstName}</td>
                                         <td style={{ width: '35%', textAlign: 'left' }}>{actor.lastName}</td>
                                         <td style={{ width: '30%' }}>
-                                            <button className="delete-button" onClick={() => handleClickVar(actor.id)}>Delete</button>
+                                        <DeleteButton onClick={() => handleClickVar(actor.id)}/>
                                         </td>
                                     </tr>
                                 ))}
@@ -115,27 +116,30 @@ const AdminActors = () => {
                 </div>
                 <div className="admin-details admin-details-actor">
                     <h3>Add New Actor</h3>
-                    <div className="input-wrapper">
-                        <input
-                            name='firstName'
-                            maxLength={50}
-                            type="text"
+                    <Form onSubmit={formik.handleSubmit} buttonText="Add Actor">
+                        <TooltipFormikInput
+                            name="firstName"
+                            value={formik.values.firstName}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             placeholder="First Name"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            className="input-field"
+                            error={formik.errors.firstName}
+                            touched={formik.touched.firstName}
+                            label="First Name"
+                            autoComplete="given-name"
                         />
-                        <input
-                            name='lastName'
-                            maxLength={50}
-                            type="text"
+                        <TooltipFormikInput
+                            name="lastName"
+                            value={formik.values.lastName}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             placeholder="Last Name"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            className="input-field"
+                            error={formik.errors.lastName}
+                            touched={formik.touched.lastName}
+                            label="Last Name"
+                            autoComplete="family-name"
                         />
-                        <button className="add-button" onClick={handleAddActor}>Add</button>
-                    </div>
+                    </Form>
                 </div>
             </div>
             <ConfirmationModal />

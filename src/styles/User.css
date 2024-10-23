@@ -23,88 +23,12 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.input-group {
-    margin-bottom: 15px;
-    display: flex;
-    gap: 1rem;
-    position: relative;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.input-wrapper {
-    width: 80%;
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.user-container input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    font-size: 1rem;
-}
-
-.submit-button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #333;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.submit-button:hover {
-    background-color: #555;
-}
-
 .user-container form {
     width: 100%;
 }
-
-/* BALANCE */
 
 .balance-buttons {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
-}
-
-.balance-buttons button {
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #333;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-.balance-buttons button:hover {
-    background-color: #333;
-}
-
-/* SECURITY */
-
-.visibility-icon {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    color: #888;
-}
-
-.visibility-icon:hover {
-    color: #333;
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AddButton } from '../../components/Button';
+import { MainContainer } from '../../components/Containers';
 
 const ErrorPage = () => {
     const location = useLocation();
@@ -34,13 +36,10 @@ const ErrorPage = () => {
     };
 
     return (
-        <div className="home">
-            <div className='page-title'>{errorCode}</div>
-            <div className='home-container'>
-                <p className="error-message">{errorMessage}</p>
-                <button className='common-button' onClick={handleButtonClick}>{buttonText()}</button>
-            </div>
-        </div>
+        <MainContainer title={errorCode} textAlign='center'>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            <AddButton text={buttonText()} onClick={handleButtonClick}/>
+        </MainContainer>
     );
 };
 

@@ -1,15 +1,11 @@
 import React from 'react';
+import { MainContainer } from '../../components/Containers';
 
 const RegisterSuccess = () => {
     return (
-        <div className="home">
-            <header>
-                <div className='page-title'>Registration</div>
-            </header>
-            <div className='home-container'>
-                <p  className="success-message">User created successfully</p>   
-            </div>
-        </div>
+        <MainContainer title="Registration" textAlign='center'>
+            <p  className="success-message">User created successfully</p>
+        </MainContainer>
     );
 };
 

@@ -16,6 +16,7 @@ import ErrorPage from './pages/other/ErrorPage';
 import RegisterSuccess from './pages/other/RegisterSuccess';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
+import { AppContainer, AppLayout } from './components/Containers';
 import { getUserInfo, logout, refreshToken } from './services/authService';
 import { ExpirationTime, IdleTime } from './utils/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,6 +37,16 @@ const App = () => {
         setShowDropdown(false);
         navigate('/login');
     }, [navigate]);
+
+    const toggleMobileMenu = useCallback(() => {
+        setIsMenuOpen((prev) => !prev);
+        setShowDropdown(false);
+    }, []);
+
+    const toggleDropdown = useCallback(() => {
+        setShowDropdown((prev) => !prev);
+        setIsMenuOpen(false);
+    }, []);
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -73,20 +84,22 @@ const App = () => {
         }
     }, [isLoggedIn, handleLogout]);
 
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                toggleDropdown();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [toggleDropdown]);
+
     if (loading) {
         return <div>Loading...</div>; // Display while waiting for the auth check to complete
     }
 
-    const toggleMobileMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
-
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
-    };
-
     return (
-        <div className="app-container">
+        <AppLayout>
             <header className="header">
                 <div className="header-space-150 header-space-150-start"><img className="header-logo" src={logo} alt="logo" /></div>
                 <nav className="nav">
@@ -137,7 +150,7 @@ const App = () => {
                 </div>
             </header>
 
-            <div className="content">
+            <AppContainer>
                 <Routes>
                     <Route path="/" element={<Navigate to="/home" />} />
                     <Route path="/home" element={<Home />} />
@@ -146,20 +159,20 @@ const App = () => {
                     <Route path="/rental" element={<PrivateRoute isLoggedIn={isLoggedIn}><Rental /></PrivateRoute>} />
                     <Route path="/rental/:id" element={<PrivateRoute isLoggedIn={isLoggedIn}><Rent /></PrivateRoute>} />
                     <Route path="/stores" element={<Stores />} />
-                    <Route path="/login" element={<PublicRoute isLoggedIn={isLoggedIn}><Login setIsLoggedIn={setIsLoggedIn} setUserInfo={setUserInfo} /></PublicRoute>} />
-                    <Route path="/register" element={<PublicRoute isLoggedIn={isLoggedIn}><Register /></PublicRoute>} />
+                    <Route path="/login" element={<PublicRoute isLoggedIn={isLoggedIn} loading={loading}><Login setIsLoggedIn={setIsLoggedIn} setUserInfo={setUserInfo} /></PublicRoute>} />
+                    <Route path="/register" element={<PublicRoute isLoggedIn={isLoggedIn} loading={loading}><Register /></PublicRoute>} />
                     <Route path="/user/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_USER"]}><User /></PrivateRoute>} />
                     <Route path="/admin/*" element={<PrivateRoute isLoggedIn={isLoggedIn} userRoles={userInfo?.roles} requiredRoles={["ROLE_ADMIN"]}><Admin /></PrivateRoute>} />
                     <Route path="/register-success" element={<RegisterSuccess />} />
                     <Route path="/error" element={<ErrorPage />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
-            </div>
+            </AppContainer>
 
             <footer className="footer">
                 <p>© 2024 Sakila Movies</p>
             </footer>
-        </div>
+        </AppLayout>
     );
 };
 

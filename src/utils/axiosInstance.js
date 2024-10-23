@@ -13,11 +13,11 @@ const createAxiosInstance = (endpoint) => {
         response => response,
         error => {
             const { response } = error;
-
             if (response && response.status === 401) {
-                // Token expired or user not authenticated
-                logout();  // Perform logout action
-                window.location.href = '/login';  // Redirect to login page
+                if (window.location.pathname !== '/login') {
+                    logout();
+                    window.location.href = '/login';
+                }
             }
 
             return Promise.reject(error);
@@ -33,7 +33,8 @@ const createAxiosInstance = (endpoint) => {
             if (response) {
                 error.customError = {
                     code: response.status,
-                    message: response.data.message || 'An error occurred.'
+                    message: response.data.message || 'An error occurred.',
+                    errors: response.data.errors || null
                 };
             } else {
                 error.customError = {

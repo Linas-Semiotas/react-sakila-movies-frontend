@@ -1,4 +1,3 @@
-// services/adminService.js
 import apiRequest from '../utils/apiService';
 
 const API_URL = '/api/admin';

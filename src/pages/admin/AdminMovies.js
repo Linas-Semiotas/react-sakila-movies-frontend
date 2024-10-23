@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Formik } from 'formik';
+import { movieSchema } from '../../utils/schemas';
+import { TooltipFormikInput, TooltipFormikSelect, TooltipFormikTextArea, Label, SimpleInput } from '../../components/Input';
+import { Form } from '../../components/Form';
+import { DeleteButton, UpdateButton, AddButton, SubmitButton } from '../../components/Button';
 import { fetchLanguages, fetchMovies, fetchCategories, fetchActors, addMovie, updateMovie, deleteMovie } from '../../services/adminService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const AdminMovies = () => {
-    const [languages, setLanguages] = useState([]);
-    const [category, setCategory] = useState([]);
-    const [actors, setActors] = useState([]);
-    const [movies, setMovies] = useState([]);
-    const [newMovie, setNewMovie] = useState({
-        title: '',
-        description: '',
-        releaseYear: '',
-        language: '',
-        filmLength: '',
-        rentalDuration: '',
-        rentalRate: '',
-        replacementCost: '',
-        rating: '',
-        specialFeatures: '',
-        category: [],
-        actors: []
-    });
-    const [editMovie, setEditMovie] = useState({
+    const initialMovieForm = () => ({
         id: null,
         title: '',
         description: '',
@@ -36,8 +23,13 @@ const AdminMovies = () => {
         category: [],
         actors: []
     });
+
+    const [languages, setLanguages] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [actors, setActors] = useState([]);
+    const [movies, setMovies] = useState([]);
+    const [movieFormState, setMovieFormState] = useState(initialMovieForm());
     const [showAddForm, setShowAddForm] = useState(true);
-    const [showUpdateForm, setShowUpdateForm] = useState(false);
     const [search, setSearch] = useState('');
     const [filteredMovies, setFilteredMovies] = useState([]);
     const [error, setError] = useState('');
@@ -46,157 +38,65 @@ const AdminMovies = () => {
     const ratings = ['G', 'PG', 'PG13', 'R', 'NC17'];
 
     useEffect(() => {
+        fetchMoviesData();
+        fetchDropdownData();
+    }, []);
+
+    const fetchMoviesData = () => {
         fetchMovies()
-            .then((data) => {
+            .then(data => {
                 setMovies(data);
                 setFilteredMovies(data);
             })
             .catch(err => Utils.handleResponse(err, setError, "Error fetching movies."));
-        fetchLanguages()
-            .then(setLanguages)
-            .catch(err => Utils.handleResponse(err, setError, "Error fetching languages."));
-        fetchCategories()
-            .then(setCategory)
-            .catch(err => Utils.handleResponse(err, setError, "Error fetching categories."));
-        fetchActors()
-            .then(setActors)
-            .catch(err => Utils.handleResponse(err, setError, "Error fetching actors."));
-    }, []);
+    };
+
+    const fetchDropdownData = () => {
+        fetchLanguages().then(setLanguages).catch(err => Utils.handleResponse(err, setError, "Error fetching languages."));
+        fetchCategories().then(setCategories).catch(err => Utils.handleResponse(err, setError, "Error fetching categories."));
+        fetchActors().then(setActors).catch(err => Utils.handleResponse(err, setError, "Error fetching actors."));
+    };
 
     const handleSearchChange = (e) => {
         const searchTerm = e.target.value.toLowerCase();
         setSearch(searchTerm);
-
-        const filtered = movies.filter(movie =>
-            movie.title.toLowerCase().includes(searchTerm)
-        );
-
+        const filtered = movies.filter(movie => movie.title.toLowerCase().includes(searchTerm));
         setFilteredMovies(filtered);
-    };
-
-    const handleInputChange = (e, isEdit = false) => {
-        const { name, value } = e.target;
-        if (isEdit) {
-            setEditMovie(prev => ({ ...prev, [name]: value }));
-        } else {
-            setNewMovie(prev => ({ ...prev, [name]: value }));
-        }
-    };
-
-    const handleMultiSelectChange = (e, name, isEdit = false) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        if (isEdit) {
-            setEditMovie(prev => ({ ...prev, [name]: selectedOptions }));
-        } else {
-            setNewMovie(prev => ({ ...prev, [name]: selectedOptions }));
-        }
     };
 
     const handleAddButtonClick = () => {
         Utils.resetResponse(setError, setSuccess);
         setShowAddForm(true);
-        setShowUpdateForm(false);
-        setNewMovie({
-            title: '',
-            description: '',
-            releaseYear: '',
-            language: '',
-            filmLength: '',
-            rentalDuration: '',
-            rentalRate: '',
-            replacementCost: '',
-            rating: '',
-            specialFeatures: '',
-            category: [],
-            actors: []
-        });
+        setMovieFormState(initialMovieForm());
     };
 
     const handleRowClick = (movie) => {
         Utils.resetResponse(setError, setSuccess);
-        setEditMovie(movie);
-        setShowUpdateForm(true);
+        setMovieFormState(movie);
         setShowAddForm(false);
     };
 
-    const removeActor = (actorName, isEdit = false) => {
-        if (isEdit) {
-            setEditMovie(prev => ({
-                ...prev,
-                actors: prev.actors.filter(actor => actor !== actorName)
-            }));
-        } else {
-            setNewMovie(prev => ({
-                ...prev,
-                actors: prev.actors.filter(actor => actor !== actorName)
-            }));
-        }
-    };
-
-    const removeCategory = (categoryName, isEdit = false) => {
-        if (isEdit) {
-            setEditMovie(prev => ({
-                ...prev,
-                category: prev.category.filter(categ => categ !== categoryName)
-            }));
-        } else {
-            setNewMovie(prev => ({
-                ...prev,
-                category: prev.category.filter(categ => categ !== categoryName)
-            }));
-        }
-    };
-
-    const handleAddMovie = () => {
+    const handleSubmitMovie = (values, isEdit = false) => {
         Utils.resetResponse(setError, setSuccess);
-        if (Object.values(newMovie).some(value => value === '' || value.length === 0)) {
-            Utils.handleResponse(null, setError, 'All fields are required.');
-            return;
-        }
-        addMovie(newMovie)
-            .then((response) => {
-                Utils.handleResponse(response, setSuccess, 'Movie added successfully.');
-                fetchMovies().then((data) => {
-                    setMovies(data);
-                    setFilteredMovies(data);
-                });
-                setShowAddForm(false);
+        const action = isEdit ? updateMovie : addMovie;
+
+        action(values)
+            .then(response => {
+                Utils.handleResponse(response, setSuccess, isEdit ? 'Movie updated successfully.' : 'Movie added successfully.');
+                fetchMoviesData();
+                if (!isEdit) setShowAddForm(false);
             })
-            .catch(err => Utils.handleResponse(err, setError, 'Error adding movie.'));
-            
+            .catch(err => Utils.handleResponse(err, setError, `Error ${isEdit ? 'updating' : 'adding'} movie.`));
     };
 
-    const handleUpdateMovie = () => {
-        Utils.resetResponse(setError, setSuccess);
-        if (Object.values(editMovie).some(value => value === '' || value.length === 0)) {
-            Utils.handleResponse(null, setError, 'All fields are required for updating.');
-            return;
-        }
-        updateMovie(editMovie)
-            .then((response) => {
-                Utils.handleResponse(response, setSuccess, 'Movie updated successfully.');
-                fetchMovies().then((data) => {
-                    setMovies(data);
-                    setFilteredMovies(data);
-                });
-            })
-            .catch(err => Utils.handleResponse(err, setError, 'Error updating movie.'));
-    };
-
-    const handleDeleteMovie = async (movieId) => {
+    const handleDeleteMovie = (movieId) => {
         Utils.resetResponse(setError, setSuccess);
         deleteMovie(movieId)
-            .then((response) => {
+            .then(response => {
                 Utils.handleResponse(response, setSuccess, 'Movie deleted successfully.');
-                fetchMovies()
-                    .then((data) => {
-                        setMovies(data);
-                        setFilteredMovies(data);
-                });
+                fetchMoviesData();
             })
-            .catch(err => {
-                Utils.handleResponse(err, setError, 'Error deleting movie. It might be in use.');
-            });
+            .catch(err => Utils.handleResponse(err, setError, 'Error deleting movie. It might be in use.'));
     };
 
     const { handleClickVar, ConfirmationModal } = Utils.useConfirmation(
@@ -208,19 +108,16 @@ const AdminMovies = () => {
     return (
         <div>
             <div className="admin-container">
-                <h2>Movie List<button className='add-button' style={{marginLeft: '2rem'}} onClick={handleAddButtonClick}>Add new movie</button></h2>
+                <h2>Movie List&emsp;<AddButton text='Add new movie' onClick={handleAddButtonClick} /></h2>
                 <div className="admin-container-column">
                     <div className="admin-table-container admin-table-container-movie">
-                        <div className="input-wrapper search">
-                            <input
-                                name='search'
-                                maxLength={50}
-                                type="text"
-                                placeholder="Search movies..."
-                                value={search}
-                                onChange={handleSearchChange}
-                            />
-                        </div>
+                        <SimpleInput 
+                            name="search"
+                            maxLength={50}
+                            placeholder="Search for movies..."
+                            value={search}
+                            onChange={handleSearchChange}
+                        />
                         <table className="admin-table">
                             <thead className="admin-table-header">
                                 <tr>
@@ -245,8 +142,8 @@ const AdminMovies = () => {
                                             <td style={{ width: '13%' }}>{movie.filmLength}</td>
                                             <td style={{ width: '13%' }}>{movie.rating}</td>
                                             <td style={{ width: '23%' }}>
-                                                <button className='update-button' onClick={() => handleRowClick(movie)}>Update</button>
-                                                <button className='delete-button' onClick={() => handleClickVar(movie.id)}>Delete</button>
+                                                <UpdateButton onClick={() => handleRowClick(movie)} />
+                                                <DeleteButton onClick={() => handleClickVar(movie.id)} />
                                             </td>
                                         </tr>
                                     ))}
@@ -259,280 +156,228 @@ const AdminMovies = () => {
             </div>
             <div className="admin-container">
                 <h3>{showAddForm ? "Add New Movie" : "Edit Movie Details"}</h3>
-                <div className="form-row">
-                    <div className="column-item">
-                        <label className="form-label" htmlFor="title">Title</label>
-                        <input
-                            id="title"
-                            maxLength={50}
-                            type="text"
-                            placeholder="Title"
-                            name="title"
-                            value={showAddForm ? newMovie.title : editMovie.title}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
-                            className="input-field"
-                        />
+                <Formik
+                    initialValues={movieFormState}
+                    validationSchema={movieSchema}
+                    onSubmit={(values) => handleSubmitMovie(values, !showAddForm)}
+                    enableReinitialize
+                >
+                    {({ values, handleChange, handleBlur, touched, errors, setFieldValue, handleSubmit }) => (
+                        <Form onSubmit={handleSubmit}>
+                            <div className="form-row">
+                                <div className="column-item">
+                                    <TooltipFormikInput
+                                        name="title"
+                                        value={values.title}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Title"
+                                        error={errors.title}
+                                        touched={touched.title}
+                                        label="Title"
+                                    />
 
-                        <label className="form-label" htmlFor="language">Language</label>
-                        <select
-                            id="language"
-                            name="language"
-                            value={showAddForm ? newMovie.language : editMovie.language}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
-                            className="select-field"
-                        >
-                            <option value="">Select Language</option>
-                            {languages.map(lang => (
-                                <option key={lang.id} value={lang.name}>{lang.name}</option>
-                            ))}
-                        </select>
+                                    <TooltipFormikSelect
+                                        name="language"
+                                        value={values.language}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        error={errors.language}
+                                        touched={touched.language}
+                                        label="Language"
+                                        options={languages}
+                                        optionKey="id"
+                                        optionLabel="name"
+                                    />
 
-                        <label className="form-label" htmlFor="filmLength">Length</label>
-                        <input
-                            id="filmLength"
-                            max={999}
-                            type="text"
-                            placeholder="Length"
-                            name="filmLength"
-                            value={showAddForm ? newMovie.filmLength : editMovie.filmLength}
-                            onChange={(e) => {
-                                let inputValue = e.target.value;
-                                const validInput = /^[0-9]*$/;
-                                if (!validInput.test(inputValue)) {
-                                    return;
-                                }
-                                const numericValue = parseInt(inputValue, 10);
-                                if (numericValue > 999) {
-                                    inputValue = '999';
-                                }
-                                e.target.value = inputValue;
-                                handleInputChange(e, !showAddForm);
-                            }}
-                            className="input-field"
-                        />
+                                    <TooltipFormikInput
+                                        name="filmLength"
+                                        value={values.filmLength}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Length"
+                                        error={errors.filmLength}
+                                        touched={touched.filmLength}
+                                        label="Film Length"
+                                    />
 
-                        <label className="form-label" htmlFor="rentalDuration">Rental Duration</label>
-                        <input
-                            id="rentalDuration"
-                            max={365}
-                            type="text"
-                            placeholder="Rental Duration"
-                            name="rentalDuration"
-                            value={showAddForm ? newMovie.rentalDuration : editMovie.rentalDuration}
-                            onChange={(e) => {
-                                let inputValue = e.target.value;
-                                const validInput = /^[0-9]*$/;
-                                if (!validInput.test(inputValue)) {
-                                    return;
-                                }
-                                const numericValue = parseInt(inputValue, 10);
-                                if (numericValue > 365) {
-                                    inputValue = '365';
-                                }
-                                e.target.value = inputValue;
-                                handleInputChange(e, !showAddForm);
-                            }}
-                            className="input-field"
-                        />
-                    </div>
+                                    <TooltipFormikInput
+                                        name="rentalDuration"
+                                        value={values.rentalDuration}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Rental Duration"
+                                        error={errors.rentalDuration}
+                                        touched={touched.rentalDuration}
+                                        label="Rental Duration"
+                                    />
+                                </div>
 
-                    <div className="column-item">
-                        <label className="form-label" htmlFor="releaseYear">Release Year</label>
-                        <input
-                            id="releaseYear"
-                            max={2100}
-                            type="text"
-                            placeholder="Release Year"
-                            name="releaseYear"
-                            value={showAddForm ? newMovie.releaseYear : editMovie.releaseYear}
-                            onChange={(e) => {
-                                let inputValue = e.target.value;
-                                const validInput = /^[0-9]*$/;
-                                if (!validInput.test(inputValue)) {
-                                    return;
-                                }
-                                const numericValue = parseInt(inputValue, 10);
-                                if (numericValue > 2100) {
-                                    inputValue = '2100';
-                                }
-                                e.target.value = inputValue;
-                                handleInputChange(e, !showAddForm);
-                            }}
-                            className="input-field"
-                        />
+                                <div className="column-item">
+                                    <TooltipFormikInput
+                                        name="releaseYear"
+                                        value={values.releaseYear}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Release Year"
+                                        error={errors.releaseYear}
+                                        touched={touched.releaseYear}
+                                        label="Release Year"
+                                    />
 
-                        <label className="form-label" htmlFor="rating">Rating</label>
-                        <select
-                            id="rating"
-                            name="rating"
-                            value={showAddForm ? newMovie.rating : editMovie.rating}
-                            onChange={(e) => handleInputChange(e, !showAddForm)}
-                            className="select-field"
-                        >
-                            <option value="">Select Rating</option>
-                            {ratings.map((rating) => (
-                                <option key={rating} value={rating}>{rating}</option>
-                            ))}
-                        </select>
-     
-                        <label className="form-label" htmlFor="replacementCost">Replacement Cost</label>
-                        <input
-                            id="replacementCost"
-                            max={999}
-                            type="text"
-                            placeholder="Replacement Cost"
-                            name="replacementCost"
-                            value={showAddForm ? newMovie.replacementCost : editMovie.replacementCost}
-                            onChange={(e) => {
-                                let inputValue = e.target.value;
-                                const validInput = /^[0-9]*\.?[0-9]{0,2}$/;
-                                if (!validInput.test(inputValue)) {
-                                    return;
-                                }
-                                const numericValue = parseFloat(inputValue);
-                                if (numericValue > 999) {
-                                    inputValue = '999';
-                                }
-                                e.target.value = inputValue;
-                                handleInputChange(e, !showAddForm);
-                            }}
-                            className="input-field"
-                        />
+                                    <TooltipFormikSelect
+                                        name="rating"
+                                        value={values.rating}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        error={errors.rating}
+                                        touched={touched.rating}
+                                        label="Rating"
+                                        options={ratings}
+                                        isSimple={true}
+                                    />
 
-                        <label className="form-label" htmlFor="rentalRate">Rental Rate</label>
-                        <input
-                            id="rentalRate"
-                            max={999}
-                            type="text"
-                            placeholder="Rental Rate"
-                            name="rentalRate"
-                            value={showAddForm ? newMovie.rentalRate : editMovie.rentalRate}
-                            onChange={(e) => {
-                                let inputValue = e.target.value;
-                                const validInput = /^[0-9]*\.?[0-9]{0,2}$/;
-                                if (!validInput.test(inputValue)) {
-                                    return;
-                                }
-                                const numericValue = parseFloat(inputValue);
-                                if (numericValue > 999) {
-                                    inputValue = '999';
-                                }
-                                e.target.value = inputValue;
-                                handleInputChange(e, !showAddForm);
-                            }}
-                            className="input-field"
-                        />
-                    </div>
-                </div>
+                                    <TooltipFormikInput
+                                        name="replacementCost"
+                                        value={values.replacementCost}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Replacement Cost"
+                                        error={errors.replacementCost}
+                                        touched={touched.replacementCost}
+                                        label="Replacement Cost"
+                                    />
 
-                <div className="full-width-item">
-                    <label className="form-label" htmlFor="description">Description</label>
-                    <textarea
-                        id="description"
-                        maxLength={255}
-                        placeholder="Description"
-                        name="description"
-                        value={showAddForm ? newMovie.description : editMovie.description}
-                        onChange={(e) => handleInputChange(e, !showAddForm)}
-                        className="textarea-field"
-                    />
-                </div>
+                                    <TooltipFormikInput
+                                        name="rentalRate"
+                                        value={values.rentalRate}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        placeholder="Rental Rate"
+                                        error={errors.rentalRate}
+                                        touched={touched.rentalRate}
+                                        label="Rental Rate"
+                                    />
+                                </div>
+                            </div>
 
-                <div className="full-width-item">
-                    <label className="form-label" htmlFor="specialFeatures">Special Features</label>
-                    <input
-                        id="specialFeatures"
-                        maxLength={255}
-                        placeholder="Special Features"
-                        name="specialFeatures"
-                        value={showAddForm ? newMovie.specialFeatures : editMovie.specialFeatures}
-                        onChange={(e) => handleInputChange(e, !showAddForm)}
-                        className="input-field"
-                    />
-                </div>
+                            <div className="full-width-item">
+                                <TooltipFormikTextArea
+                                    name="description"
+                                    value={values.description}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Description"
+                                    error={errors.description}
+                                    touched={touched.description}
+                                    label="Description"
+                                />
+                            </div>
 
-                <div className="form-row">
+                            <div className="full-width-item">
+                                <TooltipFormikInput
+                                    name="specialFeatures"
+                                    value={values.specialFeatures}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Special Features"
+                                    error={errors.specialFeatures}
+                                    touched={touched.specialFeatures}
+                                    label="Special Features"
+                                />
+                            </div>
 
-                    <div className="column-item">
+                            <div className="form-row">
+                                <div className="column-item">
+                                    <TooltipFormikSelect
+                                        name="actors"
+                                        value={values.actors}
+                                        onChange={(e) => {
+                                            const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                                            setFieldValue('actors', selectedOptions);
+                                        }}
+                                        onBlur={handleBlur}
+                                        error={errors.actors}
+                                        touched={touched.actors}
+                                        label="Actors"
+                                        options={actors.map(actor => ({
+                                            id: actor.id,
+                                            name: `${actor.firstName} ${actor.lastName}`
+                                        }))}
+                                        optionKey="id"
+                                        optionLabel="name"
+                                        multiple={true}
+                                    />
 
-                        <label className="form-label" htmlFor="actors">Actors</label>
-                        <select
-                            id="actors"
-                            name="actors"
-                            multiple
-                            value={showAddForm ? newMovie.actors : editMovie.actors}
-                            onChange={(e) => handleMultiSelectChange(e, 'actors', !showAddForm)}
-                            className="select-multiple"
-                        >
-                            {actors.map(actor => (
-                                <option key={actor.id} value={`${actor.firstName} ${actor.lastName}`}>{`${actor.firstName} ${actor.lastName}`}</option>
-                            ))}
-                        </select>
+                                    <Label text="Selected Actors:"/>
+                                    <ul>
+                                        {values.actors && values.actors.map(actorName => (
+                                            <li key={actorName} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                {actorName}
+                                                <DeleteButton
+                                                    text='Remove'
+                                                    onClick={() => {
+                                                        const updatedActors = values.actors.filter(name => name !== actorName);
+                                                        setFieldValue('actors', updatedActors);
+                                                    }}
+                                                />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
 
-                        <div className="form-label">Selected Actors:</div>
-                        <ul>
-                            {(showAddForm ? newMovie.actors : editMovie.actors).map(actor => (
-                                <li key={actor} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    {actor}
-                                    <button
-                                        className='delete-button'
-                                        onClick={() => removeActor(actor, !showAddForm)}
-                                        style={{ marginLeft: '1rem' }}
-                                    >
-                                        Remove
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                                <div className="column-item">
+                                    <TooltipFormikSelect
+                                        name="category"
+                                        value={values.category}
+                                        onChange={(e) => {
+                                            const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                                            setFieldValue('category', selectedOptions);
+                                        }}
+                                        onBlur={handleBlur}
+                                        error={errors.category}
+                                        touched={touched.category}
+                                        label="Categories"
+                                        options={categories}
+                                        optionKey="id"
+                                        optionLabel="name"
+                                        multiple={true}
+                                    />
 
-                    </div>
+                                    <Label text="Selected Categories:"/>
+                                    <ul>
+                                        {values.category && values.category.map(categId => {
+                                            const categoryName = categories.find(c => c.id === categId)?.name || categId;
+                                            return (
+                                                <li key={categId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    {categoryName}
+                                                    <DeleteButton
+                                                    text='Remove'
+                                                    onClick={() => {
+                                                        const updatedCategories = values.category.filter(id => id !== categId);
+                                                        setFieldValue('category', updatedCategories);
+                                                    }}
+                                                />
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
 
-                    <div className="column-item">
-
-                        <label className="form-label" htmlFor="category">Categories</label>
-                        <select
-                            id="category"
-                            name="category"
-                            multiple
-                            value={showAddForm ? newMovie.category : editMovie.category}
-                            onChange={(e) => handleMultiSelectChange(e, "category", !showAddForm)}
-                            className="select-multiple"
-                        >
-                            {category.map(categ => (
-                                <option key={categ.id} value={categ.name}>{categ.name}</option>
-                            ))}
-                        </select>
-
-                        <div className="form-label">Selected Categories:</div>
-                        <ul>
-                            {(showAddForm ? newMovie.category : editMovie.category).map(categ => (
-                                <li key={categ} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    {categ}
-                                    <button
-                                        className='delete-button'
-                                        onClick={() => removeCategory(categ, !showAddForm)}
-                                        style={{ marginLeft: '1rem' }}
-                                    >
-                                        Remove
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-
-                    </div>
-                </div>
-
-                <div className="button-row">
-                    {showUpdateForm && (
-                        <button className="form-button add-button" onClick={handleUpdateMovie}>Update selected movie</button>
+                            <div style={{marginTop: "20px"}}>
+                                {showAddForm ? (
+                                    <SubmitButton text="Add new movie" />
+                                ) : (
+                                    <SubmitButton text="Update selected movie" />
+                                )}
+                            </div>
+                        </Form>
                     )}
-                    {showAddForm && (
-                        <button className="form-button add-button" onClick={handleAddMovie}>Add new movie</button>
-                    )}
-                </div>
+                </Formik>
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">{success}</p>}
-            </div>    
+            </div>
         </div>
     );
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../../styles/Rent.css';
+import { SubmitButton } from '../../components/Button';
+import { MainContainerMedium } from '../../components/Containers';
 import { getRentalById, rentMovie  } from '../../services/rentalService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 
 const Rent = () => {
     const { id } = useParams();
@@ -45,7 +46,7 @@ const Rent = () => {
     );
 
     return (
-        <div className="rent-container">
+        <MainContainerMedium title="" padding='0'>
             {rental && rental.title ? (
                 <div className="rental-card">
                     <h2>{rental.title}</h2>
@@ -55,19 +56,18 @@ const Rent = () => {
                     <div className="balance-info">
                         Your Balance: {rental.balance}$
                     </div>
-                    <button 
-                        className={`rent-button ${rental.balance < rental.rentalRate ? 'disabled' : ''}`} 
-                        onClick={handleClick} 
-                        disabled={rental.balance < rental.rentalRate}
-                    >
-                        {rental.balance >= rental.rentalRate ? "Rent Now" : "Insufficient Balance"}
-                    </button>
+                    <SubmitButton 
+                        text={rental.balance >= rental.rentalRate ? "Rent Now" : "Insufficient Balance"}
+                        onClick={handleClick}
+                        type='button'
+                        isDisabled={rental.balance < rental.rentalRate}
+                    />
                     <ConfirmationModal />
                 </div>
             ) : null}
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
-        </div>
+        </MainContainerMedium>
     );
 };
 

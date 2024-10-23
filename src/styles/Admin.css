@@ -40,28 +40,8 @@
     gap: 1rem;
 }
 
-.input-wrapper {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    position: relative;
-    gap: 1rem;
-    padding-bottom: 0.5rem;
-}
-
 .column{
     flex-direction: column;
-}
-
-.input-wrapper input {
-    border: 1px solid #ccc;
-    outline: none;
-}
-
-.search input {
-    padding: 0.5rem;
-    width: calc(100% - 1rem);
-    border-radius: 4px;
 }
 
 .admin-table-container {
@@ -140,80 +120,6 @@
     top: 0;
 }
 
-.delete-button {
-    margin: 2px;
-    padding: 0.4rem 0.8rem;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer!important;
-    font-size: 0.9rem;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.delete-button:hover {
-    background-color: #c0392b;
-}
-
-.delete-button:active {
-    transform: scale(0.95);
-}
-
-.update-button {
-    margin: 2px;
-    padding: 0.4rem 0.8rem;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer!important;
-    font-size: 0.9rem;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.update-button:hover {
-    background-color: #2980b9;
-}
-
-.update-button:active {
-    transform: scale(0.95);
-}
-
-.add-button {
-    height: 40px;
-    padding: 0 1.5rem;
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer!important;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-.add-button:hover {
-    background-color: #555;
-}
-
-.add-button:active {
-    transform: scale(0.95);
-}
-
-/* USERS */
-
-.checkbox-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 1rem;
-}
-
-.checkbox-row label {
-    margin-right: 1rem;
-}
-
 /* MOVIE */
 
 .admin-table-container-movie {
@@ -247,66 +153,6 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
-}
-
-.form-label {
-    padding: 10px;
-    text-align: left;
-    font-weight: bold;
-    margin-bottom: 0.2rem;
-    display: block;
-    font-size: 0.9rem;
-    color: #333;
-}
-
-.input-field,
-.select-field {
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: border-color 0.3s;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.textarea-field {
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: border-color 0.3s;
-    outline: none;
-    width: 100%;
-    height: 75px;
-    box-sizing: border-box;
-    resize: vertical;
-}
-
-.select-multiple {
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    width: 100%;
-    height: 120px;
-}
-
-.button-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-    width: 100%;
-}
-
-.form-button {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-left: 0.5rem;
 }
 
 .admin-container ul{

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/Rental.css';
+import { SimpleInput } from '../../components/Input';
+import { MainContainer } from '../../components/Containers';
 import { getAllRentals } from '../../services/rentalService';
-import Utils from '../../utils/Utility';
+import Utils from '../../utils/utility';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
 
 const Rental = () => {
@@ -59,17 +60,15 @@ const Rental = () => {
     const paginatedRentals = sortedRentals.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <div>
-            <div className='page-title'>Rental</div>
-            <div className="rental-container">
-                <div className='list-header'>
-                    <input
+        <MainContainer title="Rental" padding='0px'>
+                <div className='search-wrapper'>
+                    <SimpleInput 
+                        name="search"
                         maxLength={100}
-                        name='search'
-                        className='search'
-                        placeholder='Search'
+                        placeholder="Search for movies..."
                         value={searchTerm} 
                         onChange={(e) => {setSearchTerm(e.target.value); setPage(0);}}
+                        margin="0px 5px"
                     />
                 </div>
                 {error && <p className="error-message">Error fetching rentals: {error.message}</p>}
@@ -145,8 +144,7 @@ const Rental = () => {
                         }}
                     />
                 </Paper>
-            </div>
-        </div>
+        </MainContainer>
     );
 };
 
